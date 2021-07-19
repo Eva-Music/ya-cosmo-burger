@@ -1,0 +1,19 @@
+
+div {
+    background-color: #2f2f37;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menuItem{
+    display: flex;
+    align-items: center;
+}
+
+.text{
+    margin-left: 10px;
+}
