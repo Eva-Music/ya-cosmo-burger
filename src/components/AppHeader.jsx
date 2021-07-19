@@ -4,7 +4,6 @@ import styles from '../styles/header-style.module.css';
 
 
 const AppHeader = () => {
-
         return (
             <div className={styles.header}>
                 <div className={`${styles.menuItem} pt-4 pr-10 pb-4 pl-10`}>
