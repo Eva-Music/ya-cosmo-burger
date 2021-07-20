@@ -1,9 +1,9 @@
 import React, {Component} from "react";
 import {Tab} from "@ya.praktikum/react-developer-burger-ui-components";
 import PropTypes from "prop-types";
-import IngredientCard from "./IngredientCard";
+import IngredientCard from "../card/IngredientCard";
 import {Element, scroller } from 'react-scroll'
-import styles from '../styles/burger-ingredient.module.css'
+import styles from './burger-ingredient.module.css'
 
 export default class BurgerIngredients extends Component {
 

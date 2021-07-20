@@ -1,6 +1,6 @@
 import {ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import React from "react";
-import styles from "../styles/burger-constr.module.css"
+import styles from "./burger-constr.module.css"
 import FinalPrice from "./FinalPrice";
 
 

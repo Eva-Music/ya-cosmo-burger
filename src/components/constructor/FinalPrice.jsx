@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import styles from '../styles/final-price.module.css'
+import styles from './final-price.module.css'
 
 const FinalPrice = () => {
     return(
