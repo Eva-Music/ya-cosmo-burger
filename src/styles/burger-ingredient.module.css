@@ -12,10 +12,8 @@
 
 .ingredientsList::-webkit-scrollbar {
     width: 8px;
-    border-radius: 5px;
     background-color: #2f2f37;
 }
 .ingredientsList::-webkit-scrollbar-thumb {
     background-color: #8585ad;
-    border-radius: 5px;
 }

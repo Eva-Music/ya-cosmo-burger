@@ -1,5 +1,4 @@
 p {
-    margin: 20px;
     align-self: flex-start;
 }
 
@@ -15,12 +14,6 @@ p {
     flex-direction:  column;
 }
 
-.inner-section{
+.main-content{
     display: flex;
-}
-
-.build-burger{
-    display: flex;
-    flex-direction:  column;
-
 }
