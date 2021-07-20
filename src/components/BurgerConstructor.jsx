@@ -7,8 +7,8 @@ import FinalPrice from "./FinalPrice";
 const BurgerConstructor = ({data}) => {
     return (
         <div className='m-10'>
-            <div className={`${styles.construction} p-2`} >
-                <section className={styles.dragIngredients}>
+            <ul className={`${styles.construction} p-2`} >
+                <li className={styles.dragIngredients}>
                     <div style={{width: 40}}>
                     </div>
                     <ConstructorElement
@@ -18,20 +18,24 @@ const BurgerConstructor = ({data}) => {
                         price={200}
                         thumbnail={'https://code.s3.yandex.net/react/code/bun-02.png'}
                     />
-                </section>
+                </li>
 
-                <section className={styles.dragIngredients}>
-                    <div style={{width: 40}}>
-                        <DragIcon type="primary"/>
-                    </div>
-                    <ConstructorElement
-                        text="Говяжий метеорит (отбивная)"
-                        price={3000}
-                        thumbnail={'https://code.s3.yandex.net/react/code/meat-04.png'}
-                    />
-                </section>
+                <li style={{height: window.innerHeight}} className={`${styles.construction} ${styles.scrollIngredients}`} >
+                    {data.filter(d => d.type !== 'bun').map(d =>{
+                        return <section className={styles.dragIngredients}>
+                            <div style={{width: 40}}>
+                                {d.type !== 'bun' && <DragIcon type="primary"/> }
+                            </div>
+                            <ConstructorElement
+                                text={d.name}
+                                price={d.price}
+                                thumbnail={d.image}
+                            />
+                        </section>
+                    })}
+                </li>
 
-                <section className={styles.dragIngredients}>
+                <li className={styles.dragIngredients}>
                     <div style={{width: 40}}>
                     </div>
                     <ConstructorElement
@@ -41,8 +45,8 @@ const BurgerConstructor = ({data}) => {
                         price={200}
                         thumbnail={'https://code.s3.yandex.net/react/code/bun-02.png'}
                     />
-                </section>
-            </div>
+                </li>
+            </ul>
 
             <FinalPrice/>
 
