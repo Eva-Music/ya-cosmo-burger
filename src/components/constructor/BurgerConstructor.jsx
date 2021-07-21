@@ -2,7 +2,7 @@ import {ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger
 import React from "react";
 import styles from "./burger-constr.module.css"
 import FinalPrice from "./FinalPrice";
-
+import PropTypes from "prop-types";
 
 const BurgerConstructor = ({data}) => {
     return (
@@ -20,9 +20,9 @@ const BurgerConstructor = ({data}) => {
                     />
                 </li>
 
-                <li style={{height: window.innerHeight}} className={`${styles.construction} ${styles.scrollIngredients}`} >
+                <li style={{height: '500px'}} className={`${styles.construction} ${styles.scrollIngredients}`} >
                     {data.filter(d => d.type !== 'bun').map(d =>{
-                        return <section className={styles.dragIngredients}>
+                        return <section key={d._id} className={styles.dragIngredients}>
                             <div style={{width: 40}}>
                                 {d.type !== 'bun' && <DragIcon type="primary"/> }
                             </div>
@@ -53,6 +53,12 @@ const BurgerConstructor = ({data}) => {
         </div>
 
     )
+}
+
+BurgerConstructor.propTypes = {
+    price: PropTypes.number.isRequired,
+    text: PropTypes.string.isRequired,
+    thumbnail: PropTypes.string.isRequired
 }
 
 export default BurgerConstructor;
