@@ -1,0 +1,10 @@
+.main{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.mainPrice{
+    display: flex;
+    align-items: center;
+}

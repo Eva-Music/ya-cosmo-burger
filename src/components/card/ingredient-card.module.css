@@ -1,0 +1,24 @@
+.card {
+    display: flex;
+    flex-direction: row;
+}
+
+.mark {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+.mainCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+    text-align: center;
+}
+
+.price {
+    display: flex;
+    align-items: center;
+}

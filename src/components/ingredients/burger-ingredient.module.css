@@ -1,0 +1,19 @@
+.cards {
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: space-evenly;
+
+}
+
+.ingredientsList{
+    width: 600px;
+    overflow-y: scroll;
+}
+
+.ingredientsList::-webkit-scrollbar {
+    width: 8px;
+    background-color: #2f2f37;
+}
+.ingredientsList::-webkit-scrollbar-thumb {
+    background-color: #8585ad;
+}
