@@ -26,8 +26,7 @@ const IngredientCard = ({price, name, img}) => {
 export default IngredientCard;
 
 IngredientCard.propTypes = {
-    price: PropTypes.number,
-    name: PropTypes.string,
-    img: PropTypes.string,
-    isChosen: PropTypes.bool
+    price: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    img: PropTypes.string.isRequired
 };
