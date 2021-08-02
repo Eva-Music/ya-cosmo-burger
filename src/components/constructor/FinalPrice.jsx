@@ -1,8 +1,9 @@
 import React from 'react';
 import {Button, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from './final-price.module.css'
+import PropTypes from "prop-types";
 
-const FinalPrice = () => {
+const FinalPrice = ({orderContent, modalOpen}) => {
     return(
         <div className={styles.main}>
             <section className={`${styles.mainPrice} m-5`}>
@@ -10,13 +11,18 @@ const FinalPrice = () => {
                 <CurrencyIcon type="primary" />
             </section>
 
-            <section className='m-5 button'>
+            <section onClick={() => {modalOpen(); orderContent();}} className='m-5 button'>
                 <Button type="primary" size="medium">
                     Оформить заказ
                 </Button>
             </section>
         </div>
     );
+}
+
+FinalPrice.propTypes = {
+    orderContent: PropTypes.func.isRequired,
+    modalOpen: PropTypes.func.isRequired
 }
 
 export default FinalPrice;

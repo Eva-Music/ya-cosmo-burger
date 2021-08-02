@@ -4,9 +4,9 @@ import IngredientCard from "../card/IngredientCard";
 import {Element } from 'react-scroll'
 import styles from './burger-ingredient.module.css'
 import PropTypes from "prop-types";
+import spinner from "../../images/spinner-197px.svg";
 
-function BurgerIngredients({data}) {
-
+function BurgerIngredients({ingredientContent, data, modalOpen}) {
     const [burgerInfo, setBurgerInfo] = useState(
         {
             menuList: [
@@ -57,8 +57,11 @@ function BurgerIngredients({data}) {
                     return <div key={l.id}>
                                 <Element className="pt-4 pr-10 pb-4 pl-10 text text_type_main-medium" name={l.name}>{l.name}</Element>
                                 <div className={styles.cards}>
-                                    {data.filter(d => d.type === l.type)
-                                        .map(d => <IngredientCard key={d._id} price={d.price} name={d.name} img={d.image}/>)}
+                                    {data ? (data.filter(d => d.type === l.type)
+                                        .map(d =>
+                                            <IngredientCard ingredientContent={ingredientContent} modalOpen={modalOpen}
+                                            key={d._id} data={d}/>))
+                                    : <img src={spinner} alt="load"/>}
                                 </div>
                            </div>
                 })}
@@ -69,6 +72,7 @@ function BurgerIngredients({data}) {
 }
 
 BurgerIngredients.propTypes = {
+    ingredientContent: PropTypes.func.isRequired,
     data: PropTypes.arrayOf(
         PropTypes.shape({
             _id: PropTypes.string.isRequired,
@@ -83,7 +87,8 @@ BurgerIngredients.propTypes = {
             image_mobile: PropTypes.string.isRequired,
             image_large: PropTypes.string.isRequired
         })
-    )
+    ),
+    modalOpen: PropTypes.func.isRequired
 }
 
 export default BurgerIngredients;

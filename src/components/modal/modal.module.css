@@ -1,0 +1,8 @@
+.inner {
+    position: absolute;
+    top: 45px;
+    left: 65px;
+    width: 77%;
+    height: 100%;
+    overflow: auto;
+}

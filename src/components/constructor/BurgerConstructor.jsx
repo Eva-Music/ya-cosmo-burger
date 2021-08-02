@@ -3,8 +3,9 @@ import React from "react";
 import styles from "./burger-constr.module.css"
 import FinalPrice from "./FinalPrice";
 import PropTypes from "prop-types";
+import spinner from "../../images/spinner.svg";
 
-const BurgerConstructor = ({data}) => {
+const BurgerConstructor = ({orderContent, data, modalOpen}) => {
     return (
         <div className='m-10'>
             <ul className={`${styles.construction} p-2`} >
@@ -21,7 +22,7 @@ const BurgerConstructor = ({data}) => {
                 </li>
 
                 <li style={{height: '500px'}} className={`${styles.construction} ${styles.scrollIngredients}`} >
-                    {data.filter(d => d.type !== 'bun').map(d =>{
+                    {data ? (data.filter(d => d.type !== 'bun').map(d =>{
                         return <section key={d._id} className={styles.dragIngredients}>
                             <div style={{width: 40}}>
                                 {d.type !== 'bun' && <DragIcon type="primary"/> }
@@ -32,7 +33,7 @@ const BurgerConstructor = ({data}) => {
                                 thumbnail={d.image}
                             />
                         </section>
-                    })}
+                    })) : <img src={spinner} alt="load"/>}
                 </li>
 
                 <li className={styles.dragIngredients}>
@@ -48,14 +49,14 @@ const BurgerConstructor = ({data}) => {
                 </li>
             </ul>
 
-            <FinalPrice/>
-
+            <FinalPrice orderContent={orderContent} modalOpen={modalOpen}/>
         </div>
 
     )
 }
 
 BurgerConstructor.propTypes = {
+    orderContent: PropTypes.func.isRequired,
     data: PropTypes.arrayOf(
         PropTypes.shape({
             _id: PropTypes.string.isRequired,
@@ -70,7 +71,8 @@ BurgerConstructor.propTypes = {
             image_mobile: PropTypes.string.isRequired,
             image_large: PropTypes.string.isRequired
         })
-    )
+    ),
+    modalOpen: PropTypes.func.isRequired
 }
 
 export default BurgerConstructor;
