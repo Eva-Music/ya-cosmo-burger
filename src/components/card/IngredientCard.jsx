@@ -27,8 +27,7 @@ export default IngredientCard;
 
 IngredientCard.propTypes = {
     ingredientContent: PropTypes.func.isRequired,
-    data: PropTypes.arrayOf(
-        PropTypes.shape({
+    data: PropTypes.shape({
             _id: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired,
             type: PropTypes.string.isRequired,
@@ -40,7 +39,6 @@ IngredientCard.propTypes = {
             image: PropTypes.string.isRequired,
             image_mobile: PropTypes.string.isRequired,
             image_large: PropTypes.string.isRequired
-        })
-    ).isRequired,
+        }).isRequired,
     modalOpen: PropTypes.func.isRequired
 };

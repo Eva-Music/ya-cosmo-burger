@@ -27,14 +27,24 @@ function App() {
     const [isModalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
-        const getProductData = async () => {
-            setState({...state, loading: true});
-            const res = await fetch(url);
-            const data = await res.json();
-            data.success &&
-            setState({ ...state, productData: data.data, loading: false });
+        try {
+            const getProductData = async () => {
+                setState({...state, loading: true});
+                const res = await fetch(url);
+                if (!res.ok) {
+                    throw new Error('Server response not ok.');
+                }
+                const data = await res.json();
+                if (data.success) {
+                    setState({ ...state, productData: data.data, loading: false });
+                } else {
+                    throw new Error('Data success is false.');
+                }
+            }
+            getProductData();
+        } catch (error) {
+            console.log('Возникла проблема с вашим fetch запросом: ', error.message);
         }
-        getProductData();
     }, [])
 
     const handleModalOpen = () => {
@@ -67,12 +77,10 @@ function App() {
     }
 
     const modal =
-         <ModalOverlay onClose={handleModalClose} isVisible={isModalVisible}>
-                <Modal>
-                    {state.ingredients.isOn && <IngredientDetails data={state.ingredients.content}/>}
-                    {state.orders.isOn && <OrderDetails uuid={state.orders.content}/>}
-                </Modal>
-        </ModalOverlay>
+        <Modal onClose={handleModalClose} isVisible={isModalVisible}>
+                {state.ingredients.isOn && <IngredientDetails data={state.ingredients.content}/>}
+                {state.orders.isOn && <OrderDetails uuid={state.orders.content}/>}
+        </Modal>
 
     return (
     <div className="App">

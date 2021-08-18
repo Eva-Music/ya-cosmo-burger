@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 const IngredientDetails = ({data}) => {
 
     return (
-        <div>
+        <div className={`mt-8 ml-8 ${style.main}`}>
             <div>
                 <p className="text text_type_main-medium">Детали ингредиента</p>
             </div>
@@ -64,8 +64,7 @@ const IngredientDetails = ({data}) => {
 }
 
 IngredientDetails.propTypes = {
-    data: PropTypes.arrayOf(
-        PropTypes.shape({
+    data: PropTypes.shape({
             _id: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired,
             type: PropTypes.string.isRequired,
@@ -77,8 +76,7 @@ IngredientDetails.propTypes = {
             image: PropTypes.string.isRequired,
             image_mobile: PropTypes.string.isRequired,
             image_large: PropTypes.string.isRequired
-        })
-    ).isRequired
+    }).isRequired
 }
 
 export default IngredientDetails;

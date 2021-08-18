@@ -4,8 +4,7 @@ import {createPortal} from "react-dom";
 import {CloseIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import PropTypes from "prop-types";
 
-const ModalOverlay = ({onClose, children}) => {
-    const modalRoot = document.getElementById("react-modals");
+const ModalOverlay = ({onClose}) => {
 
     useEffect(() => {
         document.addEventListener("keydown", onClose, false);
@@ -15,14 +14,14 @@ const ModalOverlay = ({onClose, children}) => {
         };
     }, []);
 
-    return createPortal(
+    return (
         <div className={styles.layout}>
             <div onClick={onClose} className={styles.close}>
-                <CloseIcon type="primary"/>
+                <div className={styles.icon}>
+                    <CloseIcon type="primary"/>
+                </div>
             </div>
-            {children}
-        </div>,
-        modalRoot
+        </div>
     );
 }
 
