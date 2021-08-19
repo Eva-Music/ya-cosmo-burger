@@ -3,7 +3,6 @@ import './App.css';
 import AppHeader from "../header/AppHeader";
 import BurgerIngredients from "../ingredients/BurgerIngredients";
 import BurgerConstructor from "../constructor/BurgerConstructor";
-import ModalOverlay from "../modal/ModalOverlay";
 import Modal from "../modal/Modal";
 import IngredientDetails from "../details/IngredientDetails";
 import OrderDetails from "../details/OrderDetails";
@@ -85,7 +84,6 @@ function App() {
     return (
     <div className="App">
         <AppHeader />
-        {console.log(getOrderUuid())}
         {isModalVisible && modal}
 
         <section className={"main-section"}>

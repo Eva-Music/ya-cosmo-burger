@@ -21,7 +21,7 @@ const BurgerConstructor = ({orderContent, data, modalOpen}) => {
                     />
                 </li>
 
-                <li style={{height: '500px'}} className={`${styles.construction} ${styles.scrollIngredients}`} >
+                <li style={{height: '350px'}} className={`${styles.construction} ${styles.scrollIngredients}`} >
                     {data ? (data.filter(d => d.type !== 'bun').map(d =>{
                         return <section key={d._id} className={styles.dragIngredients}>
                             <div style={{width: 40}}>

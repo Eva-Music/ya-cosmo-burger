@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 const OrderDetails = ({uuid}) => {
     return (
-        <div className={`mt-8 ml-8 ${style.main}`}>
+        <div style={{marginLeft: 46}} className={style.main}>
             <div>
                 <p className="text text_type_digits-large">{uuid}</p>
             </div>

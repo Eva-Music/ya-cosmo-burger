@@ -52,7 +52,7 @@ function BurgerIngredients({ingredientContent, data, modalOpen}) {
                 })}
             </div>
 
-            <div style={{height: '700px'}} className={`${styles.ingredientsList} scroll-class`}>
+            <div style={{height: '600px'}} className={`${styles.ingredientsList} scroll-class`}>
                 {burgerInfo.menuList.map( l => {
                     return <div key={l.id}>
                                 <Element className="pt-4 pr-10 pb-4 pl-10 text text_type_main-medium" name={l.name}>{l.name}</Element>

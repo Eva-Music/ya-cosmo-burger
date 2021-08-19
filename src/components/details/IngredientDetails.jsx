@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 const IngredientDetails = ({data}) => {
 
     return (
-        <div className={`mt-8 ml-8 ${style.main}`}>
+        <div className={style.main}>
             <div>
                 <p className="text text_type_main-medium">Детали ингредиента</p>
             </div>

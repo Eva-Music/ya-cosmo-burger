@@ -6,6 +6,6 @@
 
 .grid{
     display: flex;
-    width: 48%;
+    width: 80%;
     justify-content: space-between;
 }
