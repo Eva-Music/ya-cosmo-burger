@@ -3,16 +3,16 @@ import PropTypes from "prop-types";
 import styles from './ingredient-card.module.css';
 import {Counter, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 
-const IngredientCard = ({price, name, img}) => {
+const IngredientCard = ({ingredientContent, data, modalOpen}) => {
     return (
-        <div className={styles.card} >
+        <div className={styles.card} onClick={() => {modalOpen(); ingredientContent(data)}}>
             <section className={`${styles.mainCard} p-4`}>
-                <img src={img} alt='ingredient'/>
+                <img src={data.image} alt='ingredient'/>
                 <div className={styles.price}>
-                    <span className='text text_type_digits-default m-2'>{price}</span>
+                    <span className='text text_type_digits-default m-2'>{data.price}</span>
                     <CurrencyIcon type="primary" />
                 </div>
-                <span className={'text text_type_main-small'}>{name}</span>
+                <span className={'text text_type_main-small'}>{data.name}</span>
             </section>
 
             <section className={styles.mark}>
@@ -26,7 +26,19 @@ const IngredientCard = ({price, name, img}) => {
 export default IngredientCard;
 
 IngredientCard.propTypes = {
-    price: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    img: PropTypes.string.isRequired
+    ingredientContent: PropTypes.func.isRequired,
+    data: PropTypes.shape({
+            _id: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            type: PropTypes.string.isRequired,
+            proteins: PropTypes.number.isRequired,
+            fat: PropTypes.number.isRequired,
+            carbohydrates: PropTypes.number.isRequired,
+            calories: PropTypes.number.isRequired,
+            price: PropTypes.number.isRequired,
+            image: PropTypes.string.isRequired,
+            image_mobile: PropTypes.string.isRequired,
+            image_large: PropTypes.string.isRequired
+        }).isRequired,
+    modalOpen: PropTypes.func.isRequired
 };
