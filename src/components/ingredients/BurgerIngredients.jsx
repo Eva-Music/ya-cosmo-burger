@@ -1,12 +1,13 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {Tab} from "@ya.praktikum/react-developer-burger-ui-components";
 import IngredientCard from "../card/IngredientCard";
 import {Element } from 'react-scroll'
 import styles from './burger-ingredient.module.css'
 import PropTypes from "prop-types";
 import spinner from "../../images/spinner-197px.svg";
+import {IngredientsContext} from "../../services/burgerIngredients"
 
-function BurgerIngredients({ingredientContent, data, modalOpen}) {
+function BurgerIngredients({ingredientContent, modalOpen}) {
     const [burgerInfo, setBurgerInfo] = useState(
         {
             menuList: [
@@ -30,6 +31,9 @@ function BurgerIngredients({ingredientContent, data, modalOpen}) {
             selected: []
         }
     )
+
+    const {state} = useContext(IngredientsContext);
+
 
     function changeCurrent(e){
         setBurgerInfo({...burgerInfo, current: e});
@@ -55,15 +59,15 @@ function BurgerIngredients({ingredientContent, data, modalOpen}) {
             <div style={{height: '600px'}} className={`${styles.ingredientsList} scroll-class`}>
                 {burgerInfo.menuList.map( l => {
                     return <div key={l.id}>
-                                <Element className="pt-4 pr-10 pb-4 pl-10 text text_type_main-medium" name={l.name}>{l.name}</Element>
-                                <div className={styles.cards}>
-                                    {data ? (data.filter(d => d.type === l.type)
-                                        .map(d =>
-                                            <IngredientCard ingredientContent={ingredientContent} modalOpen={modalOpen}
-                                            key={d._id} data={d}/>))
-                                    : <img src={spinner} alt="load"/>}
-                                </div>
-                           </div>
+                        <Element className="pt-4 pr-10 pb-4 pl-10 text text_type_main-medium" name={l.name}>{l.name}</Element>
+                        <div className={styles.cards}>
+                            {state.productData ? (state.productData.filter(d => d.type === l.type)
+                                .map(d =>
+                                    <IngredientCard ingredientContent={ingredientContent} modalOpen={modalOpen}
+                                    key={d._id} data={d}/>))
+                            : <img src={spinner} alt="load"/>}
+                        </div>
+                   </div>
                 })}
             </div>
         </section>
@@ -73,7 +77,7 @@ function BurgerIngredients({ingredientContent, data, modalOpen}) {
 
 BurgerIngredients.propTypes = {
     ingredientContent: PropTypes.func.isRequired,
-    data: PropTypes.arrayOf(
+    state: PropTypes.arrayOf(
         PropTypes.shape({
             _id: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired,

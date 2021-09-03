@@ -1,6 +1,7 @@
 import style from "./details.module.css";
 import React from "react";
 import PropTypes from "prop-types";
+import spinner from "../../images/spinner.svg";
 
 const IngredientDetails = ({data}) => {
 
@@ -9,12 +10,12 @@ const IngredientDetails = ({data}) => {
             <div>
                 <p className="text text_type_main-medium">Детали ингредиента</p>
             </div>
-            <section className={`p-10 ${style.main}`}>
+            data ? <section className={`p-10 ${style.main}`}>
                 <img src={data.image_large} alt='ingredient'/>
                 <div className={"mt-5"}>
                     <p className='text text_type_main-medium'>{data.name}</p>
                 </div>
-            </section>
+            </section> : <img src={spinner} alt="load"/>
 
             <div className={style.grid}>
                 <div className={style.main}>

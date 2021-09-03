@@ -1,31 +1,59 @@
 import {ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import React from "react";
+import React, {useContext, useEffect, useState} from "react";
 import styles from "./burger-constr.module.css"
 import FinalPrice from "./FinalPrice";
 import PropTypes from "prop-types";
-import spinner from "../../images/spinner.svg";
+import {IngredientsContext} from "../../services/burgerIngredients";
 
-const BurgerConstructor = ({orderContent, data, modalOpen}) => {
+const BurgerConstructor = ({orderContent, modalOpen}) => {
+    const {state, setState} = useContext(IngredientsContext);
+
+    const [bun, setBun] = useState(null);
+    const [middle, setMiddle] = useState({
+        middle: [],
+    });
+
+    useEffect(() => {
+        clean();
+        state.productData && state.productData.forEach(d => {
+            if (d.type === 'bun'){
+                setBun(d);
+            } else {
+                setMiddle(prevState => ({
+                    middle: [...prevState.middle, d]
+                }))
+            }
+        });
+        state.productData &&
+        setState({...state, orders: {...state.orders, ingredients: state.productData.map(d => d._id)}});
+    }, [state.productData]);
+
+    const clean = () => {
+        setBun(null);
+        setMiddle({middle: []});
+    }
+
     return (
         <div className='m-10'>
-            <ul className={`${styles.construction} p-2`} >
-                <li className={styles.dragIngredients}>
+            {/*{console.log(bun, middle)}*/}
+            <ul style={{height: '500px'}} className={`${styles.construction} p-2`}>
+                {bun && <li className={styles.dragIngredients}>
                     <div style={{width: 40}}>
                     </div>
                     <ConstructorElement
                         type="top"
                         isLocked={true}
-                        text="Краторная булка N-200i (верх)"
-                        price={200}
-                        thumbnail={'https://code.s3.yandex.net/react/code/bun-02.png'}
+                        text={bun.name + '(верх)'}
+                        price={bun.price}
+                        thumbnail={bun.image}
                     />
-                </li>
+                </li>}
 
-                <li style={{height: '350px'}} className={`${styles.construction} ${styles.scrollIngredients}`} >
-                    {data ? (data.filter(d => d.type !== 'bun').map(d =>{
+                <li className={`${styles.construction} ${styles.scrollIngredients}`}>
+                    {middle.middle.map(d => {
                         return <section key={d._id} className={styles.dragIngredients}>
                             <div style={{width: 40}}>
-                                {d.type !== 'bun' && <DragIcon type="primary"/> }
+                                <DragIcon type="primary"/>
                             </div>
                             <ConstructorElement
                                 text={d.name}
@@ -33,31 +61,30 @@ const BurgerConstructor = ({orderContent, data, modalOpen}) => {
                                 thumbnail={d.image}
                             />
                         </section>
-                    })) : <img src={spinner} alt="load"/>}
+                    })}
                 </li>
 
-                <li className={styles.dragIngredients}>
+                {bun && <li className={styles.dragIngredients}>
                     <div style={{width: 40}}>
                     </div>
                     <ConstructorElement
                         type="bottom"
                         isLocked={true}
-                        text="Краторная булка N-200i (низ)"
-                        price={200}
-                        thumbnail={'https://code.s3.yandex.net/react/code/bun-02.png'}
+                        text={bun.name + '(низ)'}
+                        price={bun.price}
+                        thumbnail={bun.image}
                     />
-                </li>
+                </li>}
             </ul>
 
             <FinalPrice orderContent={orderContent} modalOpen={modalOpen}/>
         </div>
-
-    )
+    );
 }
 
 BurgerConstructor.propTypes = {
     orderContent: PropTypes.func.isRequired,
-    data: PropTypes.arrayOf(
+    state: PropTypes.arrayOf(
         PropTypes.shape({
             _id: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired,

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useReducer, useState} from 'react';
 import './App.css';
 import AppHeader from "../header/AppHeader";
 import BurgerIngredients from "../ingredients/BurgerIngredients";
@@ -6,8 +6,9 @@ import BurgerConstructor from "../constructor/BurgerConstructor";
 import Modal from "../modal/Modal";
 import IngredientDetails from "../details/IngredientDetails";
 import OrderDetails from "../details/OrderDetails";
-
+import {IngredientsContext} from "../../services/burgerIngredients"
 const url = 'https://norma.nomoreparties.space/api/ingredients';
+const url_orders = 'https://norma.nomoreparties.space/api/orders';
 
 function App() {
     const [state, setState] = useState({
@@ -19,7 +20,8 @@ function App() {
         },
         orders: {
             isOn: false,
-            content: null
+            ingredients: [],
+            number: 0
         }
     })
 
@@ -64,21 +66,32 @@ function App() {
     }
 
     const handleOrderContent = () => {
-        setState({...state,
-            orders: {isOn: true, content: getOrderUuid()}});
-    }
+        const getOrderNumber = async () => {
+            const res = await fetch(url_orders, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({"ingredients" : state.orders.ingredients})
+            });
 
-    const getOrderUuid = () => {
-        return 'xxxxxx'.replace(/[x]/g, (c) => {
-            let r = Math.random() * 6 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(6);
-        });
+            if (!res.ok) {
+                throw new Error('Server response not ok.');
+            }
+
+            let result = await res.json();
+            if (result.success) {
+                setState({
+                    ...state,
+                    orders: {isOn: true, ingredients: [], number: result.order.number}
+                });
+            }
+        }
+        getOrderNumber();
     }
 
     const modal =
         <Modal onClose={handleModalClose} isVisible={isModalVisible}>
                 {state.ingredients.isOn && <IngredientDetails data={state.ingredients.content}/>}
-                {state.orders.isOn && <OrderDetails uuid={state.orders.content}/>}
+                {state.orders.isOn && <OrderDetails number={state.orders.number}/>}
         </Modal>
 
     return (
@@ -92,12 +105,14 @@ function App() {
                     Соберите бургер
                 </p>
                 <section className={"main-content"}>
-                    <div className="App">
-                        <BurgerIngredients ingredientContent={handleIngredientContent} modalOpen={handleModalOpen} data={state.productData}/>
-                    </div>
-                    <div style={{alignSelf: "flex-start"}}>
-                        <BurgerConstructor orderContent={handleOrderContent} modalOpen={handleModalOpen} data={state.productData}/>
-                    </div>
+                    <IngredientsContext.Provider value={{state, setState}}>
+                        <div className="App">
+                            <BurgerIngredients ingredientContent={handleIngredientContent} modalOpen={handleModalOpen}/>
+                        </div>
+                        <div style={{alignSelf: "flex-start"}}>
+                            <BurgerConstructor orderContent={handleOrderContent} modalOpen={handleModalOpen}/>
+                        </div>
+                    </IngredientsContext.Provider>
                 </section>
             </div>
         </section>
