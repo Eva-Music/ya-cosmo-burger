@@ -10,12 +10,12 @@ const IngredientDetails = ({data}) => {
             <div>
                 <p className="text text_type_main-medium">Детали ингредиента</p>
             </div>
-            data ? <section className={`p-10 ${style.main}`}>
+            {data ? <section className={`p-10 ${style.main}`}>
                 <img src={data.image_large} alt='ingredient'/>
                 <div className={"mt-5"}>
                     <p className='text text_type_main-medium'>{data.name}</p>
                 </div>
-            </section> : <img src={spinner} alt="load"/>
+            </section> : <img src={spinner} alt="load"/>}
 
             <div className={style.grid}>
                 <div className={style.main}>

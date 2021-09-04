@@ -5,7 +5,7 @@ import FinalPrice from "./FinalPrice";
 import PropTypes from "prop-types";
 import {IngredientsContext} from "../../services/burgerIngredients";
 
-const BurgerConstructor = ({orderContent, modalOpen}) => {
+const BurgerConstructor = ({contentClose, orderContent, modalOpen}) => {
     const {state, setState} = useContext(IngredientsContext);
 
     const [bun, setBun] = useState(null);
@@ -15,7 +15,7 @@ const BurgerConstructor = ({orderContent, modalOpen}) => {
 
     useEffect(() => {
         clean();
-        state.productData && state.productData.forEach(d => {
+        state.ingredients.content && state.ingredients.content.forEach(d => {
             if (d.type === 'bun'){
                 setBun(d);
             } else {
@@ -24,9 +24,7 @@ const BurgerConstructor = ({orderContent, modalOpen}) => {
                 }))
             }
         });
-        state.productData &&
-        setState({...state, orders: {...state.orders, ingredients: state.productData.map(d => d._id)}});
-    }, [state.productData]);
+    }, [state.ingredients.content]);
 
     const clean = () => {
         setBun(null);
@@ -35,7 +33,6 @@ const BurgerConstructor = ({orderContent, modalOpen}) => {
 
     return (
         <div className='m-10'>
-            {/*{console.log(bun, middle)}*/}
             <ul style={{height: '500px'}} className={`${styles.construction} p-2`}>
                 {bun && <li className={styles.dragIngredients}>
                     <div style={{width: 40}}>
@@ -50,7 +47,7 @@ const BurgerConstructor = ({orderContent, modalOpen}) => {
                 </li>}
 
                 <li className={`${styles.construction} ${styles.scrollIngredients}`}>
-                    {middle.middle.map(d => {
+                    {middle.middle && middle.middle.map(d => {
                         return <section key={d._id} className={styles.dragIngredients}>
                             <div style={{width: 40}}>
                                 <DragIcon type="primary"/>
@@ -59,6 +56,7 @@ const BurgerConstructor = ({orderContent, modalOpen}) => {
                                 text={d.name}
                                 price={d.price}
                                 thumbnail={d.image}
+                                handleClose={() => contentClose(d)}
                             />
                         </section>
                     })}

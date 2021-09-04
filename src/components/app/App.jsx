@@ -16,7 +16,7 @@ function App() {
         loading: true,
         ingredients: {
             isOn: false,
-            content: null
+            content: []
         },
         orders: {
             isOn: false,
@@ -61,36 +61,56 @@ function App() {
     }
 
     const handleIngredientContent = (data) => {
-        setState({...state,
-            ingredients: {isOn: true, content: data}});
+        let newContent = [...state.ingredients.content];
+        if (data.type === 'bun' && newContent.filter(x => x.type === 'bun').length === 1){
+            newContent = newContent.filter(x => x.type !== 'bun');
+        }
+        setState({
+            ...state,
+            ingredients: {isOn: true, content: newContent.concat(data)}
+        });
+    }
+
+    const handleOrderContentClose = (item) => {
+        let newContent = [...state.ingredients.content];
+        newContent = newContent.filter(x => x._id !== item._id);
+
+        setState({
+            ...state,
+            ingredients: {isOn: true, content: newContent}
+        });
     }
 
     const handleOrderContent = () => {
-        const getOrderNumber = async () => {
-            const res = await fetch(url_orders, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({"ingredients" : state.orders.ingredients})
-            });
-
-            if (!res.ok) {
-                throw new Error('Server response not ok.');
-            }
-
-            let result = await res.json();
-            if (result.success) {
-                setState({
-                    ...state,
-                    orders: {isOn: true, ingredients: [], number: result.order.number}
+        try {
+            const getOrderNumber = async () => {
+                const res = await fetch(url_orders, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({"ingredients": state.ingredients.content.map(d => d._id)})
                 });
+
+                if (!res.ok) {
+                    throw new Error('Server response not ok.');
+                }
+
+                let result = await res.json();
+                if (result.success) {
+                    setState({
+                        ...state,
+                        orders: {isOn: true, ingredients: [], number: result.order.number}
+                    });
+                }
             }
+            getOrderNumber();
+        } catch (error) {
+            console.log('Возникла проблема с вашим fetch запросом: ', error.message);
         }
-        getOrderNumber();
     }
 
     const modal =
         <Modal onClose={handleModalClose} isVisible={isModalVisible}>
-                {state.ingredients.isOn && <IngredientDetails data={state.ingredients.content}/>}
+                {state.ingredients.isOn && <IngredientDetails data={state.ingredients.content.concat().pop()}/>}
                 {state.orders.isOn && <OrderDetails number={state.orders.number}/>}
         </Modal>
 
@@ -110,7 +130,7 @@ function App() {
                             <BurgerIngredients ingredientContent={handleIngredientContent} modalOpen={handleModalOpen}/>
                         </div>
                         <div style={{alignSelf: "flex-start"}}>
-                            <BurgerConstructor orderContent={handleOrderContent} modalOpen={handleModalOpen}/>
+                            <BurgerConstructor contentClose={handleOrderContentClose} orderContent={handleOrderContent} modalOpen={handleModalOpen}/>
                         </div>
                     </IngredientsContext.Provider>
                 </section>

@@ -9,8 +9,20 @@ const FinalPrice = ({orderContent, modalOpen}) => {
     const [finalPrice, setFinalPrice] = useState(0);
 
     useEffect(() => {
-        state.productData && setFinalPrice(state.productData.map(x => x.price).reduce((x,y) => x+y, 0));
-    }, [state.productData]);
+        if (state.ingredients.content.length !== 0) {
+            const bunPrice = state.ingredients.content.filter(x => x.type === 'bun')[0].price;
+            setFinalPrice(state.ingredients.content.map(x => x.price)
+                .reduce((x, y) => x + y, 0) + bunPrice);
+        }
+    }, [state.ingredients.content]);
+
+    const openOrderModal = () => {
+        if (state.ingredients.content
+            .filter(x => x.type === 'bun').length !== 0){
+            modalOpen();
+            orderContent()
+        }
+    }
 
     return(
         <div className={styles.main}>
@@ -19,7 +31,7 @@ const FinalPrice = ({orderContent, modalOpen}) => {
                 <CurrencyIcon type="primary" />
             </section>
 
-            <section onClick={() => {modalOpen(); orderContent();}} className='m-5 button'>
+            <section onClick={openOrderModal} className='m-5 button'>
                 <Button type="primary" size="medium">
                     Оформить заказ
                 </Button>
