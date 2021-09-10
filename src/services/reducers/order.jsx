@@ -14,7 +14,9 @@ import {
     GET_ORDER_NUMBER_SUCCESS,
 
     ORDER_PRICE,
-    DELETE_ORDER_NUMBER
+    DELETE_ORDER_NUMBER,
+
+    ADD_DRAG_INGREDIENT
 } from '../actions/order';
 
 const initialState = {
@@ -27,7 +29,7 @@ const initialState = {
     currentIngredient: null,
     modalOpen: false,
     modalContent: '',
-
+    currentDragIngredient: null,
     orderPrice: 0,
     currentOrderNumber: 0,
 };
@@ -37,6 +39,7 @@ export const orderReducer = (state = initialState, action) => {
         case ADD_CURRENT_ORDER_INGREDIENTS: {
             return {
                 ...state,
+                currentDragIngredient: null,
                 currentOrderIngredients:
                     action.data.type === 'bun' &&
                     state.currentOrderIngredients.filter(x => x.type === 'bun').length === 1 ?
@@ -52,6 +55,13 @@ export const orderReducer = (state = initialState, action) => {
                     [...state.currentOrderIngredients].filter( (x, index) =>
                         index !== state.currentOrderIngredients.indexOf(action.data, 0))
             }
+        }
+
+        case ADD_DRAG_INGREDIENT: {
+           return {
+               ...state,
+               currentDragIngredient: action.data
+           }
         }
 
         case SET_CURRENT_INGREDIENT: {

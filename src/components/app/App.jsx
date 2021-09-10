@@ -8,7 +8,14 @@ import IngredientDetails from "../details/IngredientDetails";
 import OrderDetails from "../details/OrderDetails";
 import {IngredientsContext} from "../../services/burgerIngredients"
 import {useDispatch, useSelector} from "react-redux";
-import {getListIngredients} from "../../services/actions/order";
+import {
+    ADD_CURRENT_ORDER_INGREDIENTS,
+    ADD_DRAG_INGREDIENT,
+    getListIngredients,
+    SET_CURRENT_INGREDIENT
+} from "../../services/actions/order";
+import {DndProvider} from "react-dnd";
+import {HTML5Backend} from "react-dnd-html5-backend";
 const url = 'https://norma.nomoreparties.space/api/ingredients';
 const url_orders = 'https://norma.nomoreparties.space/api/orders';
 
@@ -33,8 +40,7 @@ function App() {
         allIngredientsData,
         modalOpen,
         modalContent,
-        currentIngredient,
-        currentOrderNumber
+        currentDragIngredient
     } = useSelector(state => state.order);
 
     useEffect(
@@ -44,79 +50,28 @@ function App() {
         [dispatch]
     );
 
-    // const [isModalVisible, setModalVisible] = useState(false);
+    const [elements, setElements] = React.useState([]);
+    const [draggedElements, setDraggedElements] = React.useState([]);
+    const [draggedElement, setDraggedElement] = React.useState({});
 
-    // useEffect(() => {
-    //     try {
-    //         const getProductData = async () => {
-    //             setState({...state, loading: true});
-    //             const res = await fetch(url);
-    //             if (!res.ok) {
-    //                 throw new Error('Server response not ok.');
-    //             }
-    //             const data = await res.json();
-    //             if (data.success) {
-    //                 setState({ ...state, productData: data.data, loading: false });
-    //             } else {
-    //                 throw new Error('Data success is false.');
-    //             }
-    //         }
-    //         getProductData();
-    //     } catch (error) {
-    //         console.log('Возникла проблема с вашим fetch запросом: ', error.message);
-    //     }
-    // }, [])
+    const handleDrag = (e, data) => {
+        e.preventDefault();
+        dispatch({
+            type: ADD_DRAG_INGREDIENT,
+            data
+        });
+    };
 
-    // const handleModalOpen = () => {
-    //     setModalVisible(true);
-    // }
+    const handleDragOver = e => e.preventDefault();
 
-    // const handleModalClose = () => {
-    //     setState({...state,
-    //         ingredients: {...state.ingredients, isOn: false},
-    //         orders: {...state.orders, isOn: false}});
-    //
-    //     setModalVisible(false);
-    // }
+    const handleDrop = () => {
+        const data = currentDragIngredient;
 
-    // const handleIngredientContent = (data) => {
-    //     let newContent = [...state.ingredients.content];
-    //     if (data.type === 'bun' && newContent.filter(x => x.type === 'bun').length === 1){
-    //         newContent = newContent.filter(x => x.type !== 'bun');
-    //     }
-    //     setState({
-    //         ...state,
-    //         ingredients: {isOn: true, content: newContent.concat(data)}
-    //     });
-    // }
-
-
-    // const handleOrderContent = () => {
-    //     try {
-    //         const getOrderNumber = async () => {
-    //             const res = await fetch(url_orders, {
-    //                 method: 'POST',
-    //                 headers: {'Content-Type': 'application/json'},
-    //                 body: JSON.stringify({"ingredients": state.ingredients.content.map(d => d._id)})
-    //             });
-    //
-    //             if (!res.ok) {
-    //                 throw new Error('Server response not ok.');
-    //             }
-    //
-    //             let result = await res.json();
-    //             if (result.success) {
-    //                 setState({
-    //                     ...state,
-    //                     orders: {isOn: true, ingredients: [], number: result.order.number}
-    //                 });
-    //             }
-    //         }
-    //         getOrderNumber();
-    //     } catch (error) {
-    //         console.log('Возникла проблема с вашим fetch запросом: ', error.message);
-    //     }
-    // }
+        dispatch({
+            type: ADD_CURRENT_ORDER_INGREDIENTS,
+            data
+        });
+    };
 
     const modal =
         <Modal isVisible={modalOpen}>
@@ -136,10 +91,12 @@ function App() {
                 </p>
                 <section className={"main-content"}>
                     <div className="App">
-                        <BurgerIngredients/>
+                        <DndProvider backend={HTML5Backend}>
+                            <BurgerIngredients onDragHandler={handleDrag} />
+                        </DndProvider>
                     </div>
                     <div style={{alignSelf: "flex-start"}}>
-                        <BurgerConstructor/>
+                        <BurgerConstructor onDragOverHandler={handleDragOver} onDropHandler={handleDrop}/>
                     </div>
                 </section>
             </div>

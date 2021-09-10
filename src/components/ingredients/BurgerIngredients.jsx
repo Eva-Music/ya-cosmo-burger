@@ -4,7 +4,7 @@ import IngredientComponent from "./IngredientComponent";
 import {Tab} from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./burger-ingredient.module.css";
 
-function BurgerIngredients() {
+function BurgerIngredients({onDragHandler}) {
 
     const [ refBun, inViewBun ] = useInView({
         threshold: 1,
@@ -34,15 +34,15 @@ function BurgerIngredients() {
 
             <div style={{height: '600px'}} className={`${styles.ingredientsList} scroll-class`}>
                 <div ref={refBun} >
-                    <IngredientComponent name='Булки' type='bun'/>
+                    <IngredientComponent onDragHandler={onDragHandler} name='Булки' type='bun'/>
                 </div>
 
                 <div ref={refSauce} >
-                    <IngredientComponent name='Соусы' type='sauce'/>
+                    <IngredientComponent onDragHandler={onDragHandler} name='Соусы' type='sauce'/>
                 </div>
 
                 <div ref={refMain} >
-                    <IngredientComponent name='Начинки' type='main'/>
+                    <IngredientComponent onDragHandler={onDragHandler} name='Начинки' type='main'/>
                 </div>
 
             </div>

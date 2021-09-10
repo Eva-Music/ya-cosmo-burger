@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import {useDispatch, useSelector} from "react-redux";
 import {DELETE_CURRENT_ORDER_INGREDIENTS} from "../../services/actions/order";
 
-const BurgerConstructor = () => {
+const BurgerConstructor = ({onDragOverHandler, onDropHandler}) => {
 
     const {
         currentOrderIngredients
@@ -21,44 +21,6 @@ const BurgerConstructor = () => {
         })
     }
 
-    // const [bun, setBun] = useState(null);
-    // const [middle, setMiddle] = useState({
-    //     middle: [],
-    // });
-
-    // const [state, setState] = useState({
-    //     bun: null,
-    //     middle: []
-    // });
-    //
-    // useEffect(() => {
-    //     currentOrderIngredients && currentOrderIngredients.forEach(d => {
-    //         if (d.type === 'bun'){
-    //             setState({
-    //                 ...state,
-    //                 bun: d
-    //             });
-    //         } else {
-    //             // setMiddle(prevState => ({
-    //             //     middle: [...prevState.middle, d]
-    //             // }))
-    //             setState(prevState =>({
-    //                 ...state,
-    //                 middle: [...prevState.middle, d]
-    //             }))
-    //             console.log(state.middle);
-    //         }
-    //     });
-    // }, [currentOrderIngredients]);
-    //
-    // useEffect(() => {
-    //         setState({
-    //             bun: null,
-    //             middle: []
-    //         });
-    //     },[]
-    // );
-
     const bun = useMemo(() => {
         return currentOrderIngredients.filter(x => x.type === 'bun')[0];
     }, [currentOrderIngredients]);
@@ -69,7 +31,8 @@ const BurgerConstructor = () => {
 
     return (
         <div className='m-10'>
-            <ul style={{height: '500px'}} className={`${styles.construction} p-2`}>
+            <ul onDrop={onDropHandler} onDragOver={onDragOverHandler}
+                style={{height: '500px'}} className={`${styles.construction} p-2`}>
                 {currentOrderIngredients && bun &&
                     <li className={styles.dragIngredients}>
                         <div style={{width: 40}}>

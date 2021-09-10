@@ -5,7 +5,7 @@ import {Counter, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-com
 import {useDispatch, useSelector} from "react-redux";
 import {ADD_CURRENT_ORDER_INGREDIENTS, SET_CURRENT_INGREDIENT} from "../../services/actions/order";
 
-const IngredientCard = ({data}) => {
+const IngredientCard = ({data, onDragHandler}) => {
 
     const dispatch = useDispatch();
 
@@ -14,14 +14,12 @@ const IngredientCard = ({data}) => {
             type: SET_CURRENT_INGREDIENT,
             data
         });
-        dispatch({
-            type: ADD_CURRENT_ORDER_INGREDIENTS,
-            data
-        });
     }
 
     return (
-        <div className={styles.card} onClick={() => {handleIngredientContent(data)}}>
+        <div className={styles.card} draggable
+             onClick={() => {handleIngredientContent(data)}}
+             onDrag={(e) => onDragHandler(e, data)}>
             <section className={`${styles.mainCard} p-4`}>
                 <img src={data.image} alt='ingredient'/>
                 <div className={styles.price}>
