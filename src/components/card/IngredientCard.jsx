@@ -2,10 +2,26 @@ import React from "react";
 import PropTypes from "prop-types";
 import styles from './ingredient-card.module.css';
 import {Counter, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
+import {useDispatch, useSelector} from "react-redux";
+import {ADD_CURRENT_ORDER_INGREDIENTS, SET_CURRENT_INGREDIENT} from "../../services/actions/order";
 
-const IngredientCard = ({ingredientContent, data, modalOpen}) => {
+const IngredientCard = ({data}) => {
+
+    const dispatch = useDispatch();
+
+    const handleIngredientContent = (data) => {
+        dispatch({
+            type: SET_CURRENT_INGREDIENT,
+            data
+        });
+        dispatch({
+            type: ADD_CURRENT_ORDER_INGREDIENTS,
+            data
+        });
+    }
+
     return (
-        <div className={styles.card} onClick={() => {modalOpen(); ingredientContent(data)}}>
+        <div className={styles.card} onClick={() => {handleIngredientContent(data)}}>
             <section className={`${styles.mainCard} p-4`}>
                 <img src={data.image} alt='ingredient'/>
                 <div className={styles.price}>
@@ -26,7 +42,6 @@ const IngredientCard = ({ingredientContent, data, modalOpen}) => {
 export default IngredientCard;
 
 IngredientCard.propTypes = {
-    ingredientContent: PropTypes.func.isRequired,
     data: PropTypes.shape({
             _id: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired,
@@ -40,5 +55,4 @@ IngredientCard.propTypes = {
             image_mobile: PropTypes.string.isRequired,
             image_large: PropTypes.string.isRequired
         }).isRequired,
-    modalOpen: PropTypes.func.isRequired
 };

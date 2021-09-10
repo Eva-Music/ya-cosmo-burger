@@ -1,54 +1,92 @@
 import {ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useMemo, useState} from "react";
 import styles from "./burger-constr.module.css"
 import FinalPrice from "./FinalPrice";
 import PropTypes from "prop-types";
-import {IngredientsContext} from "../../services/burgerIngredients";
+import {useDispatch, useSelector} from "react-redux";
+import {DELETE_CURRENT_ORDER_INGREDIENTS} from "../../services/actions/order";
 
-const BurgerConstructor = ({contentClose, orderContent, modalOpen}) => {
-    const {state, setState} = useContext(IngredientsContext);
+const BurgerConstructor = () => {
 
-    const [bun, setBun] = useState(null);
-    const [middle, setMiddle] = useState({
-        middle: [],
-    });
+    const {
+        currentOrderIngredients
+    } = useSelector(state => state.order);
 
-    useEffect(() => {
-        clean();
-        state.ingredients.content && state.ingredients.content.forEach(d => {
-            if (d.type === 'bun'){
-                setBun(d);
-            } else {
-                setMiddle(prevState => ({
-                    middle: [...prevState.middle, d]
-                }))
-            }
-        });
-    }, [state.ingredients.content]);
+    const dispatch = useDispatch();
 
-    const clean = () => {
-        setBun(null);
-        setMiddle({middle: []});
+    const handleIngredientDelete = (data) => {
+        dispatch({
+            type: DELETE_CURRENT_ORDER_INGREDIENTS,
+            data
+        })
     }
+
+    // const [bun, setBun] = useState(null);
+    // const [middle, setMiddle] = useState({
+    //     middle: [],
+    // });
+
+    // const [state, setState] = useState({
+    //     bun: null,
+    //     middle: []
+    // });
+    //
+    // useEffect(() => {
+    //     currentOrderIngredients && currentOrderIngredients.forEach(d => {
+    //         if (d.type === 'bun'){
+    //             setState({
+    //                 ...state,
+    //                 bun: d
+    //             });
+    //         } else {
+    //             // setMiddle(prevState => ({
+    //             //     middle: [...prevState.middle, d]
+    //             // }))
+    //             setState(prevState =>({
+    //                 ...state,
+    //                 middle: [...prevState.middle, d]
+    //             }))
+    //             console.log(state.middle);
+    //         }
+    //     });
+    // }, [currentOrderIngredients]);
+    //
+    // useEffect(() => {
+    //         setState({
+    //             bun: null,
+    //             middle: []
+    //         });
+    //     },[]
+    // );
+
+    const bun = useMemo(() => {
+        return currentOrderIngredients.filter(x => x.type === 'bun')[0];
+    }, [currentOrderIngredients]);
+
+    const middle = useMemo(() => {
+        return currentOrderIngredients.filter(x => x.type !== 'bun');
+    }, [currentOrderIngredients]);
 
     return (
         <div className='m-10'>
             <ul style={{height: '500px'}} className={`${styles.construction} p-2`}>
-                {bun && <li className={styles.dragIngredients}>
-                    <div style={{width: 40}}>
-                    </div>
-                    <ConstructorElement
-                        type="top"
-                        isLocked={true}
-                        text={bun.name + '(верх)'}
-                        price={bun.price}
-                        thumbnail={bun.image}
-                    />
-                </li>}
+                {currentOrderIngredients && bun &&
+                    <li className={styles.dragIngredients}>
+                        <div style={{width: 40}}>
+                        </div>
+                        <ConstructorElement
+                            type="top"
+                            isLocked={true}
+                            text={bun.name + '(верх)'}
+                            price={bun.price}
+                            thumbnail={bun.image}
+                        />
+                    </li>
+                }
 
                 <li className={`${styles.construction} ${styles.scrollIngredients}`}>
-                    {middle.middle && middle.middle.map(d => {
-                        return <section key={d._id} className={styles.dragIngredients}>
+                    {currentOrderIngredients && middle && middle.map((d, index) => {
+                        return <section key={index} className={styles.dragIngredients}>
                             <div style={{width: 40}}>
                                 <DragIcon type="primary"/>
                             </div>
@@ -56,32 +94,33 @@ const BurgerConstructor = ({contentClose, orderContent, modalOpen}) => {
                                 text={d.name}
                                 price={d.price}
                                 thumbnail={d.image}
-                                handleClose={() => contentClose(d)}
+                                handleClose={() => handleIngredientDelete(d)}
                             />
                         </section>
                     })}
                 </li>
 
-                {bun && <li className={styles.dragIngredients}>
-                    <div style={{width: 40}}>
-                    </div>
-                    <ConstructorElement
-                        type="bottom"
-                        isLocked={true}
-                        text={bun.name + '(низ)'}
-                        price={bun.price}
-                        thumbnail={bun.image}
-                    />
-                </li>}
+                {currentOrderIngredients && bun &&
+                    <li className={styles.dragIngredients}>
+                        <div style={{width: 40}}>
+                        </div>
+                        <ConstructorElement
+                            type="bottom"
+                            isLocked={true}
+                            text={bun.name + '(низ)'}
+                            price={bun.price}
+                            thumbnail={bun.image}
+                        />
+                    </li>
+                }
             </ul>
 
-            <FinalPrice orderContent={orderContent} modalOpen={modalOpen}/>
+            <FinalPrice/>
         </div>
     );
 }
 
 BurgerConstructor.propTypes = {
-    orderContent: PropTypes.func.isRequired,
     state: PropTypes.arrayOf(
         PropTypes.shape({
             _id: PropTypes.string.isRequired,
@@ -97,7 +136,6 @@ BurgerConstructor.propTypes = {
             image_large: PropTypes.string.isRequired
         })
     ),
-    modalOpen: PropTypes.func.isRequired
 }
 
 export default BurgerConstructor;
