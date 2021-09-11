@@ -6,7 +6,7 @@ import spinner from "../../images/spinner-197px.svg";
 import {useSelector} from "react-redux";
 import PropTypes from "prop-types";
 
-const IngredientComponent = ({name, type, onDragHandler}) => {
+const IngredientComponent = ({name, type}) => {
 
     const {
         allIngredientsData
@@ -18,7 +18,7 @@ const IngredientComponent = ({name, type, onDragHandler}) => {
             <div className={styles.cards}>
                 {allIngredientsData ? (allIngredientsData.filter(d => d.type === type)
                         .map(d =>
-                            <IngredientCard onDragHandler={onDragHandler} key={d._id} data={d}/>))
+                            <IngredientCard key={d._id} data={d}/>))
                     : <img src={spinner} alt="load"/>}
             </div>
         </div>

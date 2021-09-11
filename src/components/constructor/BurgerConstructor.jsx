@@ -1,78 +1,67 @@
-import {ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import React, {useContext, useEffect, useMemo, useState} from "react";
+import {ConstructorElement} from "@ya.praktikum/react-developer-burger-ui-components";
+import React from "react";
 import styles from "./burger-constr.module.css"
 import FinalPrice from "./FinalPrice";
 import PropTypes from "prop-types";
-import {useDispatch, useSelector} from "react-redux";
-import {DELETE_CURRENT_ORDER_INGREDIENTS} from "../../services/actions/order";
+import {useSelector} from "react-redux";
+import {useDrop} from "react-dnd";
+import MainIngredient from "./MainIngredient";
 
-const BurgerConstructor = ({onDragOverHandler, onDropHandler}) => {
+const BurgerConstructor = ({onMoveImage, onDropHandler}) => {
 
     const {
-        currentOrderIngredients
+        currentOrderIngredients,
     } = useSelector(state => state.order);
 
-    const dispatch = useDispatch();
 
-    const handleIngredientDelete = (data) => {
-        dispatch({
-            type: DELETE_CURRENT_ORDER_INGREDIENTS,
-            data
+    const [{isOver},dropTarget] = useDrop({
+        accept: "ingredient",
+        drop(itemId) {
+            onDropHandler(itemId);
+        },
+        collect: monitor => ({
+            isOver: monitor.isOver(),
         })
-    }
-
-    const bun = useMemo(() => {
-        return currentOrderIngredients.filter(x => x.type === 'bun')[0];
-    }, [currentOrderIngredients]);
-
-    const middle = useMemo(() => {
-        return currentOrderIngredients.filter(x => x.type !== 'bun');
-    }, [currentOrderIngredients]);
+    });
 
     return (
         <div className='m-10'>
-            <ul onDrop={onDropHandler} onDragOver={onDragOverHandler}
-                style={{height: '500px'}} className={`${styles.construction} p-2`}>
-                {currentOrderIngredients && bun &&
+            <ul ref={dropTarget} style={{height: '500px'}} className={`${styles.construction} ${isOver && styles.target} p-2`}>
+                {currentOrderIngredients &&
+                currentOrderIngredients.filter(x => x.type === 'bun')[0] &&
                     <li className={styles.dragIngredients}>
                         <div style={{width: 40}}>
                         </div>
                         <ConstructorElement
                             type="top"
                             isLocked={true}
-                            text={bun.name + '(верх)'}
-                            price={bun.price}
-                            thumbnail={bun.image}
+                            text={currentOrderIngredients.filter(x => x.type === 'bun')[0].name + '(верх)'}
+                            price={currentOrderIngredients.filter(x => x.type === 'bun')[0].price}
+                            thumbnail={currentOrderIngredients.filter(x => x.type === 'bun')[0].image}
                         />
                     </li>
                 }
 
                 <li className={`${styles.construction} ${styles.scrollIngredients}`}>
-                    {currentOrderIngredients && middle && middle.map((d, index) => {
-                        return <section key={index} className={styles.dragIngredients}>
-                            <div style={{width: 40}}>
-                                <DragIcon type="primary"/>
-                            </div>
-                            <ConstructorElement
-                                text={d.name}
-                                price={d.price}
-                                thumbnail={d.image}
-                                handleClose={() => handleIngredientDelete(d)}
-                            />
-                        </section>
+                    {currentOrderIngredients &&
+                    currentOrderIngredients.filter(x => x.type !== 'bun').length !== 0 &&
+                    currentOrderIngredients.filter(x => x.type !== 'bun').map((d, index) => {
+                        return <MainIngredient moveImage={onMoveImage}
+                                               data={d} index={index} key={index}/>
                     })}
                 </li>
 
-                {currentOrderIngredients && bun &&
+                {currentOrderIngredients &&
+                currentOrderIngredients.filter(x => x.type === 'bun')[0] &&
                     <li className={styles.dragIngredients}>
                         <div style={{width: 40}}>
                         </div>
                         <ConstructorElement
                             type="bottom"
                             isLocked={true}
-                            text={bun.name + '(низ)'}
-                            price={bun.price}
-                            thumbnail={bun.image}
+                            text={currentOrderIngredients.filter(x => x.type === 'bun')[0].name + '(низ)'}
+                            price={currentOrderIngredients.filter(x => x.type === 'bun')[0].price}
+                            thumbnail={currentOrderIngredients.filter(x => x.type === 'bun')[0].image}
                         />
                     </li>
                 }

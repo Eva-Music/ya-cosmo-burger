@@ -6,7 +6,12 @@
 
 .dragIngredients {
     align-items: center;
-    display: flex
+    display: flex;
+    cursor: grab;
+}
+
+.target {
+    border: 1px forestgreen dotted;
 }
 
 .scrollIngredients{

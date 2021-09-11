@@ -2,6 +2,7 @@ import {
     DELETE_CURRENT_INGREDIENT,
     SET_CURRENT_INGREDIENT,
 
+    CHANGE_CURRENT_ORDER_INGREDIENTS,
     ADD_CURRENT_ORDER_INGREDIENTS,
     DELETE_CURRENT_ORDER_INGREDIENTS,
 
@@ -25,7 +26,11 @@ const initialState = {
     allIngredientsFailToLoad: false,
 
     currentOrderIngredients: [],
-
+    ingredientsCounter: [{
+        id: 0,
+        count: 0,
+        isBun: false,
+    }],
     currentIngredient: null,
     modalOpen: false,
     modalContent: '',
@@ -40,17 +45,49 @@ export const orderReducer = (state = initialState, action) => {
             return {
                 ...state,
                 currentDragIngredient: null,
+                ingredientsCounter:
+                    (state.currentOrderIngredients.length &&
+                    state.ingredientsCounter.filter(x => x.id === action.data._id && !x.isBun).length > 0) ?
+                    [...state.ingredientsCounter].map(x =>
+                        x.id === action.data._id ? {...x, count: ++x.count} : x
+                    ) :
+                        (action.data.type === 'bun' &&
+                            state.ingredientsCounter.filter(x => x.isBun).length !== 0) ?
+                            [...state.ingredientsCounter.map(x => x.isBun ? {...x.count, id: action.data._id,
+                                count: 1, isBun: true} : x)]
+                            :
+                    [...state.ingredientsCounter,
+                        {id: action.data._id, count: 1, isBun: action.data.type === 'bun'}],
+
                 currentOrderIngredients:
-                    action.data.type === 'bun' &&
-                    state.currentOrderIngredients.filter(x => x.type === 'bun').length === 1 ?
-                        [...state.currentOrderIngredients.filter(x => x.type === 'bun'), action.data] :
+                    (action.data.type === 'bun' &&
+                    state.currentOrderIngredients.filter(x => x.type === 'bun').length > 0) ?
+                        [...state.currentOrderIngredients.map(x => x.type === 'bun' ? action.data : x)] :
                         [...state.currentOrderIngredients, action.data]
             }
+        }
+
+        case CHANGE_CURRENT_ORDER_INGREDIENTS: {
+            return {
+                ...state,
+                currentOrderIngredients:
+                    [...state.currentOrderIngredients.map((x, index) =>
+                        index === action.dragIndex ?
+                            state.currentOrderIngredients[action.hoverIndex] :
+                            index === action.hoverIndex ? action.draggedImage : x )
+                    ]
+                }
         }
 
         case DELETE_CURRENT_ORDER_INGREDIENTS: {
             return {
                 ...state,
+                ingredientsCounter:
+                    ([...state.ingredientsCounter].map(x =>
+                            x.id === action.data._id ? {...x, count: --x.count} : x
+                        )
+                    ),
+
                 currentOrderIngredients:
                     [...state.currentOrderIngredients].filter( (x, index) =>
                         index !== state.currentOrderIngredients.indexOf(action.data, 0))
@@ -135,7 +172,8 @@ export const orderReducer = (state = initialState, action) => {
                 orderPrice: state.currentOrderIngredients.length !== 0 ?
                     state.currentOrderIngredients.map(x => x.price)
                         .reduce((x, y) => x + y, 0) +
-                    state.currentOrderIngredients.filter(x => x.type === 'bun')[0].price : 0
+                    ((state.currentOrderIngredients.filter(x => x.type === 'bun').length === 1) ?
+                    state.currentOrderIngredients.filter(x => x.type === 'bun')[0].price : 0) : 0
             }
         }
         default: {

@@ -1,4 +1,4 @@
-import React, {useEffect, useReducer, useState} from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
 import AppHeader from "../header/AppHeader";
 import BurgerIngredients from "../ingredients/BurgerIngredients";
@@ -6,41 +6,23 @@ import BurgerConstructor from "../constructor/BurgerConstructor";
 import Modal from "../modal/Modal";
 import IngredientDetails from "../details/IngredientDetails";
 import OrderDetails from "../details/OrderDetails";
-import {IngredientsContext} from "../../services/burgerIngredients"
 import {useDispatch, useSelector} from "react-redux";
 import {
-    ADD_CURRENT_ORDER_INGREDIENTS,
-    ADD_DRAG_INGREDIENT,
+    ADD_CURRENT_ORDER_INGREDIENTS, ADD_INDEX, CHANGE_CURRENT_ORDER_INGREDIENTS,
     getListIngredients,
-    SET_CURRENT_INGREDIENT
 } from "../../services/actions/order";
 import {DndProvider} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
-const url = 'https://norma.nomoreparties.space/api/ingredients';
-const url_orders = 'https://norma.nomoreparties.space/api/orders';
 
 function App() {
-    // const [state, setState] = useState({
-    //     productData: null,
-    //     loading: true,
-    //     ingredients: {
-    //         isOn: false,
-    //         content: []
-    //     },
-    //     orders: {
-    //         isOn: false,
-    //         ingredients: [],
-    //         number: 0
-    //     }
-    // })
-
     const dispatch = useDispatch();
 
     const {
         allIngredientsData,
         modalOpen,
         modalContent,
-        currentDragIngredient
+        currentDragIngredient,
+        currentOrderIngredients
     } = useSelector(state => state.order);
 
     useEffect(
@@ -50,28 +32,31 @@ function App() {
         [dispatch]
     );
 
-    const [elements, setElements] = React.useState([]);
-    const [draggedElements, setDraggedElements] = React.useState([]);
-    const [draggedElement, setDraggedElement] = React.useState({});
-
-    const handleDrag = (e, data) => {
-        e.preventDefault();
-        dispatch({
-            type: ADD_DRAG_INGREDIENT,
-            data
-        });
-    };
-
-    const handleDragOver = e => e.preventDefault();
-
-    const handleDrop = () => {
+    const handleDrop = (id) => {
         const data = currentDragIngredient;
-
         dispatch({
             type: ADD_CURRENT_ORDER_INGREDIENTS,
             data
         });
     };
+
+    const handleMoveImage = (dragIndex, hoverIndex) => {
+            const draggedImage =  currentOrderIngredients[dragIndex];
+
+            console.log(dragIndex,
+                hoverIndex,
+                draggedImage)
+
+            dispatch({
+                type: CHANGE_CURRENT_ORDER_INGREDIENTS,
+                dragIndex,
+                hoverIndex,
+                draggedImage
+            });
+
+            currentOrderIngredients.forEach(x => console.log(x));
+    };
+
 
     const modal =
         <Modal isVisible={modalOpen}>
@@ -89,16 +74,17 @@ function App() {
                 <p className="text_type_main-large m-10">
                     Соберите бургер
                 </p>
-                <section className={"main-content"}>
-                    <div className="App">
-                        <DndProvider backend={HTML5Backend}>
-                            <BurgerIngredients onDragHandler={handleDrag} />
-                        </DndProvider>
-                    </div>
-                    <div style={{alignSelf: "flex-start"}}>
-                        <BurgerConstructor onDragOverHandler={handleDragOver} onDropHandler={handleDrop}/>
-                    </div>
-                </section>
+                <DndProvider backend={HTML5Backend}>
+                    <section className={"main-content"}>
+                        <div className="App">
+                            <BurgerIngredients />
+                        </div>
+                        <div style={{alignSelf: "flex-start"}}>
+                            <BurgerConstructor onMoveImage={handleMoveImage} onDropHandler={handleDrop}/>
+                        </div>
+                    </section>
+                </DndProvider>
+
             </div>
         </section>
     </div>
