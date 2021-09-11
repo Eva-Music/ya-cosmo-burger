@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import './App.css';
 import AppHeader from "../header/AppHeader";
 import BurgerIngredients from "../ingredients/BurgerIngredients";
@@ -34,29 +34,19 @@ function App() {
 
     const handleDrop = (id) => {
         const data = currentDragIngredient;
+        const uuid = getOrderUuid();
         dispatch({
             type: ADD_CURRENT_ORDER_INGREDIENTS,
-            data
+            data, uuid
         });
     };
 
-    const handleMoveImage = (dragIndex, hoverIndex) => {
-            const draggedImage =  currentOrderIngredients[dragIndex];
-
-            console.log(dragIndex,
-                hoverIndex,
-                draggedImage)
-
-            dispatch({
-                type: CHANGE_CURRENT_ORDER_INGREDIENTS,
-                dragIndex,
-                hoverIndex,
-                draggedImage
-            });
-
-            currentOrderIngredients.forEach(x => console.log(x));
-    };
-
+    function getOrderUuid() {
+        return 'xxxxxx'.replace(/[x]/g, (c) => {
+            let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
 
     const modal =
         <Modal isVisible={modalOpen}>
@@ -80,7 +70,7 @@ function App() {
                             <BurgerIngredients />
                         </div>
                         <div style={{alignSelf: "flex-start"}}>
-                            <BurgerConstructor onMoveImage={handleMoveImage} onDropHandler={handleDrop}/>
+                            <BurgerConstructor onDropHandler={handleDrop}/>
                         </div>
                     </section>
                 </DndProvider>

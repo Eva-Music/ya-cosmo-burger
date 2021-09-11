@@ -63,20 +63,16 @@ export const orderReducer = (state = initialState, action) => {
                     (action.data.type === 'bun' &&
                     state.currentOrderIngredients.filter(x => x.type === 'bun').length > 0) ?
                         [...state.currentOrderIngredients.map(x => x.type === 'bun' ? action.data : x)] :
-                        [...state.currentOrderIngredients, action.data]
+                        [...state.currentOrderIngredients, {...action.data, uuid: action.uuid }]
             }
         }
 
         case CHANGE_CURRENT_ORDER_INGREDIENTS: {
-            return {
-                ...state,
+            return { ...state,
                 currentOrderIngredients:
-                    [...state.currentOrderIngredients.map((x, index) =>
-                        index === action.dragIndex ?
-                            state.currentOrderIngredients[action.hoverIndex] :
-                            index === action.hoverIndex ? action.draggedImage : x )
-                    ]
-                }
+                    [...state.currentOrderIngredients].splice(action.dragIndex, 1)
+                    .splice(action.hoverIndex, 0, state.currentOrderIngredients[action.dragIndex])
+            };
         }
 
         case DELETE_CURRENT_ORDER_INGREDIENTS: {

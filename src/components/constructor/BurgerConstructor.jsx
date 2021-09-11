@@ -4,10 +4,11 @@ import styles from "./burger-constr.module.css"
 import FinalPrice from "./FinalPrice";
 import PropTypes from "prop-types";
 import {useSelector} from "react-redux";
-import {useDrop} from "react-dnd";
+import {DndProvider, useDrop} from "react-dnd";
 import MainIngredient from "./MainIngredient";
+import {HTML5Backend} from "react-dnd-html5-backend";
 
-const BurgerConstructor = ({onMoveImage, onDropHandler}) => {
+const BurgerConstructor = ({onDropHandler}) => {
 
     const {
         currentOrderIngredients,
@@ -42,14 +43,15 @@ const BurgerConstructor = ({onMoveImage, onDropHandler}) => {
                     </li>
                 }
 
-                <li className={`${styles.construction} ${styles.scrollIngredients}`}>
-                    {currentOrderIngredients &&
-                    currentOrderIngredients.filter(x => x.type !== 'bun').length !== 0 &&
-                    currentOrderIngredients.filter(x => x.type !== 'bun').map((d, index) => {
-                        return <MainIngredient moveImage={onMoveImage}
-                                               data={d} index={index} key={index}/>
-                    })}
-                </li>
+                    <li className={`${styles.construction} ${styles.scrollIngredients}`}>
+                        {currentOrderIngredients &&
+                        currentOrderIngredients.map((d, index) => {
+                            if ( d.type !== 'bun') {
+                                return <MainIngredient index={index} id={d.uuid} data={d}
+                                                       key={d.uuid}/>
+                            }
+                        })}
+                    </li>
 
                 {currentOrderIngredients &&
                 currentOrderIngredients.filter(x => x.type === 'bun')[0] &&
