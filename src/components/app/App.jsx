@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect} from 'react';
-import './App.css';
+import React, {useEffect} from 'react';
+import style from './app.module.css';
 import AppHeader from "../header/AppHeader";
 import BurgerIngredients from "../ingredients/BurgerIngredients";
 import BurgerConstructor from "../constructor/BurgerConstructor";
@@ -8,7 +8,7 @@ import IngredientDetails from "../details/IngredientDetails";
 import OrderDetails from "../details/OrderDetails";
 import {useDispatch, useSelector} from "react-redux";
 import {
-    ADD_CURRENT_ORDER_INGREDIENTS, ADD_INDEX, CHANGE_CURRENT_ORDER_INGREDIENTS,
+    ADD_CURRENT_ORDER_INGREDIENTS,
     getListIngredients,
 } from "../../services/actions/order";
 import {DndProvider} from "react-dnd";
@@ -22,7 +22,6 @@ function App() {
         modalOpen,
         modalContent,
         currentDragIngredient,
-        currentOrderIngredients
     } = useSelector(state => state.order);
 
     useEffect(
@@ -32,53 +31,45 @@ function App() {
         [dispatch]
     );
 
-    const handleDrop = (id) => {
+    const handleDrop = () => {
         const data = currentDragIngredient;
-        const uuid = getOrderUuid();
         dispatch({
             type: ADD_CURRENT_ORDER_INGREDIENTS,
-            data, uuid
+            data
         });
     };
 
-    function getOrderUuid() {
-        return 'xxxxxx'.replace(/[x]/g, (c) => {
-            let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
-
     const modal =
         <Modal isVisible={modalOpen}>
-                {modalContent === 'ingredients' && <IngredientDetails/>}
-                {modalContent === 'order' && <OrderDetails/>}
+            {modalContent === 'ingredients' && <IngredientDetails/>}
+            {modalContent === 'order' && <OrderDetails/>}
         </Modal>
 
     return (
-    <div className="App">
-        <AppHeader />
-        {modalOpen && modal}
+        <div className={style.App}>
+            <AppHeader />
+            {modalOpen && modal}
 
-        <section className={"main-section"}>
-            <div className="App">
-                <p className="text_type_main-large m-10">
-                    Соберите бургер
-                </p>
-                <DndProvider backend={HTML5Backend}>
-                    <section className={"main-content"}>
-                        <div className="App">
-                            <BurgerIngredients />
-                        </div>
-                        <div style={{alignSelf: "flex-start"}}>
-                            <BurgerConstructor onDropHandler={handleDrop}/>
-                        </div>
-                    </section>
-                </DndProvider>
+            <section className={style.mainSection}>
+                <div className={style.App}>
+                    <p className={`text_type_main-large m-10`}>
+                        Соберите бургер
+                    </p>
+                    <DndProvider backend={HTML5Backend}>
+                        <section className={style.mainContent}>
+                            <div className={style.App}>
+                                <BurgerIngredients />
+                            </div>
+                            <div style={{alignSelf: "flex-start"}}>
+                                <BurgerConstructor onDropHandler={handleDrop}/>
+                            </div>
+                        </section>
+                    </DndProvider>
 
-            </div>
-        </section>
-    </div>
-  );
+                </div>
+            </section>
+        </div>
+    );
 }
 
 export default App;

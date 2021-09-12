@@ -1,9 +1,9 @@
-import React, {useCallback, useEffect, useMemo} from "react";
+import React, { useEffect, useMemo} from "react";
 import PropTypes from "prop-types";
 import styles from './ingredient-card.module.css';
 import {Counter, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_CURRENT_ORDER_INGREDIENTS, ADD_DRAG_INGREDIENT, SET_CURRENT_INGREDIENT} from "../../services/actions/order";
+import { ADD_DRAG_INGREDIENT, SET_CURRENT_INGREDIENT} from "../../services/actions/order";
 import {useDrag} from "react-dnd";
 
 const IngredientCard = ({data}) => {

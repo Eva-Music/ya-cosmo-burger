@@ -32,31 +32,39 @@ export function getListIngredients() {
                 });
             } else {
                 dispatch({
-                    type: GET_LIST_INGREDIENTS_FAILED
+                    type: GET_LIST_INGREDIENTS_FAILED,
+                    message: res.message
                 });
             }
+        }).catch(err => {
+            dispatch({
+                type: GET_LIST_INGREDIENTS_FAILED,
+                message: err.message
+            });
         });
     };
 }
 
-
-export function getOrderNumber(ingredients) {
-    return function(dispatch) {
+export const getOrderNumber = (ingredients) => async (dispatch)  => {
         dispatch({
             type: GET_ORDER_NUMBER_REQUEST,
-            ingredients
         });
         getOrderNumberRequest(ingredients).then(res => {
             if (res && res.success) {
                 dispatch({
                     type: GET_ORDER_NUMBER_SUCCESS,
-                    value: { ...res, ingredients }
+                    value: res
                 });
             } else {
                 dispatch({
-                    type: GET_ORDER_NUMBER_FAILED
+                    type: GET_ORDER_NUMBER_FAILED,
+                    message: res.message
                 });
             }
+        }).catch(err => {
+            dispatch({
+                type: GET_ORDER_NUMBER_FAILED,
+                message: err.message
+            });
         });
-    };
 }

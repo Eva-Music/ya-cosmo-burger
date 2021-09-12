@@ -3,15 +3,16 @@ import styles from "./burger-constr.module.css";
 import {ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import {useDrag, useDrop} from "react-dnd";
 import {CHANGE_CURRENT_ORDER_INGREDIENTS, DELETE_CURRENT_ORDER_INGREDIENTS} from "../../services/actions/order";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
+import PropTypes from "prop-types";
 
 const MainIngredient = ({index, id, data}) => {
     const ref = useRef(null);
 
-    const handleIngredientDelete = (data) => {
+    const handleIngredientDelete = (index, itemId) => {
         dispatch({
             type: DELETE_CURRENT_ORDER_INGREDIENTS,
-            data
+            index, itemId
         })
     };
 
@@ -62,12 +63,30 @@ const MainIngredient = ({index, id, data}) => {
                     text={data.name}
                     price={data.price}
                     thumbnail={data.image}
-                    handleClose={() => handleIngredientDelete(data)}
+                    handleClose={() => handleIngredientDelete(index, data._id)}
                 />
             </section>
         </div>
     );
 
+}
+
+MainIngredient.propTypes = {
+    index: PropTypes.number.isRequired,
+    id: PropTypes.number.isRequired,
+    data: PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired,
+        proteins: PropTypes.number.isRequired,
+        fat: PropTypes.number.isRequired,
+        carbohydrates: PropTypes.number.isRequired,
+        calories: PropTypes.number.isRequired,
+        price: PropTypes.number.isRequired,
+        image: PropTypes.string.isRequired,
+        image_mobile: PropTypes.string.isRequired,
+        image_large: PropTypes.string.isRequired
+    }).isRequired,
 }
 
 export default MainIngredient;

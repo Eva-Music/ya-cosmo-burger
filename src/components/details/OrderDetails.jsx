@@ -1,7 +1,6 @@
 import style from './details.module.css'
 import {CheckMarkIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import PropTypes from "prop-types";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 
 const OrderDetails = () => {
     const {

@@ -24,7 +24,7 @@ const initialState = {
     allIngredientsData: [],
     loading: false,
     allIngredientsFailToLoad: false,
-
+    allIngredientsFailedMsg: '',
     currentOrderIngredients: [],
     ingredientsCounter: [{
         id: 0,
@@ -37,6 +37,7 @@ const initialState = {
     currentDragIngredient: null,
     orderPrice: 0,
     currentOrderNumber: 0,
+    orderPriceFailedMsg: ''
 };
 
 export const orderReducer = (state = initialState, action) => {
@@ -54,40 +55,33 @@ export const orderReducer = (state = initialState, action) => {
                         (action.data.type === 'bun' &&
                             state.ingredientsCounter.filter(x => x.isBun).length !== 0) ?
                             [...state.ingredientsCounter.map(x => x.isBun ? {...x.count, id: action.data._id,
-                                count: 1, isBun: true} : x)]
+                                count: 2, isBun: true} : x)]
                             :
                     [...state.ingredientsCounter,
-                        {id: action.data._id, count: 1, isBun: action.data.type === 'bun'}],
+                        {id: action.data._id, isBun: action.data.type === 'bun',
+                            count: action.data.type === 'bun' ? 2 : 1}],
 
                 currentOrderIngredients:
                     (action.data.type === 'bun' &&
                     state.currentOrderIngredients.filter(x => x.type === 'bun').length > 0) ?
                         [...state.currentOrderIngredients.map(x => x.type === 'bun' ? action.data : x)] :
-                        [...state.currentOrderIngredients, {...action.data, uuid: action.uuid }]
+                        [...state.currentOrderIngredients, action.data]
             }
         }
 
         case CHANGE_CURRENT_ORDER_INGREDIENTS: {
-            return { ...state,
-                currentOrderIngredients:
-                    [...state.currentOrderIngredients].splice(action.dragIndex, 1)
-                    .splice(action.hoverIndex, 0, state.currentOrderIngredients[action.dragIndex])
-            };
+            const newIngredients = [...state.currentOrderIngredients];
+            const [ dragIndex, hoverIndex ] = [action.dragIndex, action.hoverIndex];
+            newIngredients.splice(dragIndex, 1);
+            newIngredients.splice(hoverIndex, 0, state.currentOrderIngredients[dragIndex]);
+            return { ...state, currentOrderIngredients: newIngredients };
         }
 
         case DELETE_CURRENT_ORDER_INGREDIENTS: {
-            return {
-                ...state,
-                ingredientsCounter:
-                    ([...state.ingredientsCounter].map(x =>
-                            x.id === action.data._id ? {...x, count: --x.count} : x
-                        )
-                    ),
-
-                currentOrderIngredients:
-                    [...state.currentOrderIngredients].filter( (x, index) =>
-                        index !== state.currentOrderIngredients.indexOf(action.data, 0))
-            }
+            const newArr = state.currentOrderIngredients.filter((_, index) => index !== action.index);
+            const newCounter = state.ingredientsCounter.filter(x => x.id === action.itemId ?
+                {...x, count: --x.count} : x)
+            return {...state, currentOrderIngredients: newArr, ingredientsCounter: newCounter};
         }
 
         case ADD_DRAG_INGREDIENT: {
@@ -130,7 +124,8 @@ export const orderReducer = (state = initialState, action) => {
             return {
                 ...state,
                 allIngredientsFailToLoad: true,
-                loading: false
+                loading: false,
+                allIngredientsFailedMsg: action.message
             };
         }
         case GET_ORDER_NUMBER_REQUEST: {
@@ -151,7 +146,8 @@ export const orderReducer = (state = initialState, action) => {
             return {
                 ...state,
                 modalOpen: false,
-                currentOrderNumber: 0
+                currentOrderNumber: 0,
+                orderPriceFailedMsg: action.message
             }
         }
         case DELETE_ORDER_NUMBER: {

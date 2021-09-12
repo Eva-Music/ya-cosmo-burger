@@ -4,9 +4,8 @@ import styles from "./burger-constr.module.css"
 import FinalPrice from "./FinalPrice";
 import PropTypes from "prop-types";
 import {useSelector} from "react-redux";
-import {DndProvider, useDrop} from "react-dnd";
+import {useDrop} from "react-dnd";
 import MainIngredient from "./MainIngredient";
-import {HTML5Backend} from "react-dnd-html5-backend";
 
 const BurgerConstructor = ({onDropHandler}) => {
 
@@ -30,42 +29,41 @@ const BurgerConstructor = ({onDropHandler}) => {
             <ul ref={dropTarget} style={{height: '500px'}} className={`${styles.construction} ${isOver && styles.target} p-2`}>
                 {currentOrderIngredients &&
                 currentOrderIngredients.filter(x => x.type === 'bun')[0] &&
-                    <li className={styles.dragIngredients}>
-                        <div style={{width: 40}}>
-                        </div>
-                        <ConstructorElement
-                            type="top"
-                            isLocked={true}
-                            text={currentOrderIngredients.filter(x => x.type === 'bun')[0].name + '(верх)'}
-                            price={currentOrderIngredients.filter(x => x.type === 'bun')[0].price}
-                            thumbnail={currentOrderIngredients.filter(x => x.type === 'bun')[0].image}
-                        />
-                    </li>
+                <li className={styles.dragIngredients}>
+                    <div style={{width: 40}}>
+                    </div>
+                    <ConstructorElement
+                        type="top"
+                        isLocked={true}
+                        text={currentOrderIngredients.filter(x => x.type === 'bun')[0].name + '(верх)'}
+                        price={currentOrderIngredients.filter(x => x.type === 'bun')[0].price}
+                        thumbnail={currentOrderIngredients.filter(x => x.type === 'bun')[0].image}
+                    />
+                </li>
                 }
 
-                    <li className={`${styles.construction} ${styles.scrollIngredients}`}>
-                        {currentOrderIngredients &&
-                        currentOrderIngredients.map((d, index) => {
-                            if ( d.type !== 'bun') {
-                                return <MainIngredient index={index} id={d.uuid} data={d}
-                                                       key={d.uuid}/>
-                            }
-                        })}
-                    </li>
+                <li className={`${styles.construction} ${styles.scrollIngredients}`}>
+                    {currentOrderIngredients &&
+                    currentOrderIngredients.map((d, index) => {
+                        if ( d.type !== 'bun') {
+                            return <MainIngredient index={index} id={index} data={d} key={index}/>
+                        }
+                    })}
+                </li>
 
                 {currentOrderIngredients &&
                 currentOrderIngredients.filter(x => x.type === 'bun')[0] &&
-                    <li className={styles.dragIngredients}>
-                        <div style={{width: 40}}>
-                        </div>
-                        <ConstructorElement
-                            type="bottom"
-                            isLocked={true}
-                            text={currentOrderIngredients.filter(x => x.type === 'bun')[0].name + '(низ)'}
-                            price={currentOrderIngredients.filter(x => x.type === 'bun')[0].price}
-                            thumbnail={currentOrderIngredients.filter(x => x.type === 'bun')[0].image}
-                        />
-                    </li>
+                <li className={styles.dragIngredients}>
+                    <div style={{width: 40}}>
+                    </div>
+                    <ConstructorElement
+                        type="bottom"
+                        isLocked={true}
+                        text={currentOrderIngredients.filter(x => x.type === 'bun')[0].name + '(низ)'}
+                        price={currentOrderIngredients.filter(x => x.type === 'bun')[0].price}
+                        thumbnail={currentOrderIngredients.filter(x => x.type === 'bun')[0].image}
+                    />
+                </li>
                 }
             </ul>
 
@@ -75,21 +73,7 @@ const BurgerConstructor = ({onDropHandler}) => {
 }
 
 BurgerConstructor.propTypes = {
-    state: PropTypes.arrayOf(
-        PropTypes.shape({
-            _id: PropTypes.string.isRequired,
-            name: PropTypes.string.isRequired,
-            type: PropTypes.string.isRequired,
-            proteins: PropTypes.number.isRequired,
-            fat: PropTypes.number.isRequired,
-            carbohydrates: PropTypes.number.isRequired,
-            calories: PropTypes.number.isRequired,
-            price: PropTypes.number.isRequired,
-            image: PropTypes.string.isRequired,
-            image_mobile: PropTypes.string.isRequired,
-            image_large: PropTypes.string.isRequired
-        })
-    ),
+    onDropHandler: PropTypes.func.isRequired
 }
 
 export default BurgerConstructor;
