@@ -38,7 +38,8 @@ const initialState = {
     currentDragIngredient: null,
     orderPrice: 0,
     currentOrderNumber: 0,
-    orderPriceFailedMsg: ''
+    orderPriceFailedMsg: '',
+    ingredientCounter: 0,
 };
 
 export const orderReducer = (state = initialState, action) => {
@@ -48,6 +49,7 @@ export const orderReducer = (state = initialState, action) => {
             return {
                 ...state,
                 currentDragIngredient: null,
+                ingredientCounter: ++state.ingredientCounter,
                 ingredientsCounter:
                     (state.currentOrderIngredients.length &&
                     state.ingredientsCounter.filter(x => x.id === action.data._id).length > 0) ?
@@ -67,7 +69,8 @@ export const orderReducer = (state = initialState, action) => {
                     action.data.type === 'bun' ? action.data : state.bun,
 
                 currentOrderIngredients:
-                    action.data.type !== 'bun' ? [...state.currentOrderIngredients, action.data] :
+                    action.data.type !== 'bun' ? [...state.currentOrderIngredients,
+                            {...action.data, id: state.ingredientCounter }] :
                     [...state.currentOrderIngredients]
             }
         }

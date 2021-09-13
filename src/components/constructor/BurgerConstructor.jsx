@@ -1,5 +1,5 @@
 import {ConstructorElement} from "@ya.praktikum/react-developer-burger-ui-components";
-import React, {useCallback, useState} from "react";
+import React, {useCallback} from "react";
 import styles from "./burger-constr.module.css"
 import FinalPrice from "./FinalPrice";
 import PropTypes from "prop-types";
@@ -27,6 +27,7 @@ const BurgerConstructor = ({onDropHandler}) => {
         })
     });
 
+
     const moveCard = useCallback((dragIndex, hoverIndex) => {
         dispatch({
             type: CHANGE_CURRENT_ORDER_INGREDIENTS, dragIndex, hoverIndex
@@ -53,7 +54,7 @@ const BurgerConstructor = ({onDropHandler}) => {
                 <li className={`${styles.construction} ${styles.scrollIngredients}`}>
                     {currentOrderIngredients &&
                     currentOrderIngredients.map((d, index) => {
-                        return <MainIngredient moveCard={moveCard} index={index} id={index} data={d} key={index}/>
+                        return <MainIngredient moveCard={moveCard} index={index} id={d.id} data={d} key={d.id}/>
                     })}
                 </li>
 

@@ -8,7 +8,8 @@ const FinalPrice = () => {
 
     const {
         currentOrderIngredients,
-        orderPrice
+        orderPrice,
+        bun
     } = useSelector(state => state.order);
 
     const dispatch = useDispatch();
@@ -22,8 +23,7 @@ const FinalPrice = () => {
     }, [currentOrderIngredients]);
 
     const openOrderModal = () => {
-        return currentOrderIngredients.filter(x => x.type === 'bun').length !== 0 &&
-            dispatch(getOrderNumber(currentOrderIngredients));
+        return bun && dispatch(getOrderNumber(currentOrderIngredients));
     }
 
     return (
