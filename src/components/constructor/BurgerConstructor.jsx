@@ -1,78 +1,85 @@
-import {ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import React from "react";
+import {ConstructorElement} from "@ya.praktikum/react-developer-burger-ui-components";
+import React, {useCallback} from "react";
 import styles from "./burger-constr.module.css"
 import FinalPrice from "./FinalPrice";
 import PropTypes from "prop-types";
-import spinner from "../../images/spinner.svg";
+import {useDispatch, useSelector} from "react-redux";
+import {useDrop} from "react-dnd";
+import MainIngredient from "./MainIngredient";
+import {CHANGE_CURRENT_ORDER_INGREDIENTS} from "../../services/actions/order";
 
-const BurgerConstructor = ({orderContent, data, modalOpen}) => {
+const BurgerConstructor = ({onDropHandler}) => {
+
+    const dispatch = useDispatch();
+
+    const {
+        currentOrderIngredients,
+        bun
+    } = useSelector(state => state.order);
+
+    const [{isOver}, dropTarget] = useDrop({
+        accept: "ingredient",
+        drop(itemId) {
+            onDropHandler(itemId);
+        },
+        collect: monitor => ({
+            isOver: monitor.isOver(),
+        })
+    });
+
+
+    const moveCard = useCallback((dragIndex, hoverIndex) => {
+        dispatch({
+            type: CHANGE_CURRENT_ORDER_INGREDIENTS, dragIndex, hoverIndex
+        });
+    }, [currentOrderIngredients]);
+
     return (
         <div className='m-10'>
-            <ul className={`${styles.construction} p-2`} >
+            <ul ref={dropTarget} style={{height: '500px'}} className={`${styles.construction} ${isOver && styles.target} p-2`}>
+                {bun != null &&
                 <li className={styles.dragIngredients}>
                     <div style={{width: 40}}>
                     </div>
                     <ConstructorElement
                         type="top"
                         isLocked={true}
-                        text="Краторная булка N-200i (верх)"
-                        price={200}
-                        thumbnail={'https://code.s3.yandex.net/react/code/bun-02.png'}
+                        text={bun.name + '(верх)'}
+                        price={bun.price}
+                        thumbnail={bun.image}
                     />
                 </li>
+                }
 
-                <li style={{height: '350px'}} className={`${styles.construction} ${styles.scrollIngredients}`} >
-                    {data ? (data.filter(d => d.type !== 'bun').map(d =>{
-                        return <section key={d._id} className={styles.dragIngredients}>
-                            <div style={{width: 40}}>
-                                {d.type !== 'bun' && <DragIcon type="primary"/> }
-                            </div>
-                            <ConstructorElement
-                                text={d.name}
-                                price={d.price}
-                                thumbnail={d.image}
-                            />
-                        </section>
-                    })) : <img src={spinner} alt="load"/>}
+                <li className={`${styles.construction} ${styles.scrollIngredients}`}>
+                    {currentOrderIngredients &&
+                    currentOrderIngredients.map((d, index) => {
+                        return <MainIngredient moveCard={moveCard} index={index} id={d.id} data={d} key={d.id}/>
+                    })}
                 </li>
 
+                {bun !== null &&
                 <li className={styles.dragIngredients}>
                     <div style={{width: 40}}>
                     </div>
                     <ConstructorElement
                         type="bottom"
                         isLocked={true}
-                        text="Краторная булка N-200i (низ)"
-                        price={200}
-                        thumbnail={'https://code.s3.yandex.net/react/code/bun-02.png'}
+                        text={bun.name + '(низ)'}
+                        price={bun.price}
+                        thumbnail={bun.image}
                     />
                 </li>
+                }
             </ul>
 
-            <FinalPrice orderContent={orderContent} modalOpen={modalOpen}/>
+            <FinalPrice/>
         </div>
-
-    )
+    );
 }
 
 BurgerConstructor.propTypes = {
-    orderContent: PropTypes.func.isRequired,
-    data: PropTypes.arrayOf(
-        PropTypes.shape({
-            _id: PropTypes.string.isRequired,
-            name: PropTypes.string.isRequired,
-            type: PropTypes.string.isRequired,
-            proteins: PropTypes.number.isRequired,
-            fat: PropTypes.number.isRequired,
-            carbohydrates: PropTypes.number.isRequired,
-            calories: PropTypes.number.isRequired,
-            price: PropTypes.number.isRequired,
-            image: PropTypes.string.isRequired,
-            image_mobile: PropTypes.string.isRequired,
-            image_large: PropTypes.string.isRequired
-        })
-    ),
-    modalOpen: PropTypes.func.isRequired
+    onDropHandler: PropTypes.func.isRequired
 }
 
 export default BurgerConstructor;

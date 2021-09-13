@@ -1,108 +1,75 @@
-import React, {useEffect, useState} from 'react';
-import './App.css';
+import React, {useEffect} from 'react';
+import style from './app.module.css';
 import AppHeader from "../header/AppHeader";
 import BurgerIngredients from "../ingredients/BurgerIngredients";
 import BurgerConstructor from "../constructor/BurgerConstructor";
 import Modal from "../modal/Modal";
 import IngredientDetails from "../details/IngredientDetails";
 import OrderDetails from "../details/OrderDetails";
-
-const url = 'https://norma.nomoreparties.space/api/ingredients';
+import {useDispatch, useSelector} from "react-redux";
+import {
+    ADD_CURRENT_ORDER_INGREDIENTS,
+    getListIngredients,
+} from "../../services/actions/order";
+import {DndProvider} from "react-dnd";
+import {HTML5Backend} from "react-dnd-html5-backend";
 
 function App() {
-    const [state, setState] = useState({
-        productData: null,
-        loading: true,
-        ingredients: {
-            isOn: false,
-            content: null
+    const dispatch = useDispatch();
+
+    const {
+        allIngredientsData,
+        modalOpen,
+        modalContent,
+        currentDragIngredient,
+    } = useSelector(state => state.order);
+
+    useEffect(
+        () => {
+            if (!allIngredientsData.length) dispatch(getListIngredients());
         },
-        orders: {
-            isOn: false,
-            content: null
-        }
-    })
+        [dispatch]
+    );
 
-    const [isModalVisible, setModalVisible] = useState(false);
-
-    useEffect(() => {
-        try {
-            const getProductData = async () => {
-                setState({...state, loading: true});
-                const res = await fetch(url);
-                if (!res.ok) {
-                    throw new Error('Server response not ok.');
-                }
-                const data = await res.json();
-                if (data.success) {
-                    setState({ ...state, productData: data.data, loading: false });
-                } else {
-                    throw new Error('Data success is false.');
-                }
-            }
-            getProductData();
-        } catch (error) {
-            console.log('Возникла проблема с вашим fetch запросом: ', error.message);
-        }
-    }, [])
-
-    const handleModalOpen = () => {
-        setModalVisible(true);
-    }
-
-    const handleModalClose = () => {
-        setState({...state,
-            ingredients: {...state.ingredients, isOn: false},
-            orders: {...state.orders, isOn: false}});
-
-        setModalVisible(false);
-    }
-
-    const handleIngredientContent = (data) => {
-        setState({...state,
-            ingredients: {isOn: true, content: data}});
-    }
-
-    const handleOrderContent = () => {
-        setState({...state,
-            orders: {isOn: true, content: getOrderUuid()}});
-    }
-
-    const getOrderUuid = () => {
-        return 'xxxxxx'.replace(/[x]/g, (c) => {
-            let r = Math.random() * 6 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(6);
+    const handleDrop = () => {
+        const data = currentDragIngredient;
+        dispatch({
+            type: ADD_CURRENT_ORDER_INGREDIENTS,
+            data
         });
-    }
+    };
 
     const modal =
-        <Modal onClose={handleModalClose} isVisible={isModalVisible}>
-                {state.ingredients.isOn && <IngredientDetails data={state.ingredients.content}/>}
-                {state.orders.isOn && <OrderDetails uuid={state.orders.content}/>}
+        <Modal isVisible={modalOpen}>
+            {modalContent === 'ingredients' && <IngredientDetails/>}
+            {modalContent === 'order' && <OrderDetails/>}
         </Modal>
 
     return (
-    <div className="App">
-        <AppHeader />
-        {isModalVisible && modal}
+        <div className={style.App}>
+            <AppHeader />
+            {modalOpen && modal}
 
-        <section className={"main-section"}>
-            <div className="App">
-                <p className="text_type_main-large m-10">
-                    Соберите бургер
-                </p>
-                <section className={"main-content"}>
-                    <div className="App">
-                        <BurgerIngredients ingredientContent={handleIngredientContent} modalOpen={handleModalOpen} data={state.productData}/>
-                    </div>
-                    <div style={{alignSelf: "flex-start"}}>
-                        <BurgerConstructor orderContent={handleOrderContent} modalOpen={handleModalOpen} data={state.productData}/>
-                    </div>
-                </section>
-            </div>
-        </section>
-    </div>
-  );
+            <section className={style.mainSection}>
+                <div className={style.App}>
+                    <p className={`text_type_main-large m-10`}>
+                        Соберите бургер
+                    </p>
+                    <DndProvider backend={HTML5Backend}>
+                        <section className={style.mainContent}>
+                            <div className={style.App}>
+                                <BurgerIngredients />
+                            </div>
+                            <div style={{alignSelf: "flex-start"}}>
+                                <BurgerConstructor onDropHandler={handleDrop}/>
+                            </div>
+                        </section>
+                    </DndProvider>
+
+                </div>
+            </section>
+        </div>
+    );
 }
 
 export default App;
