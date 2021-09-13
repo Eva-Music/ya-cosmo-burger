@@ -25,6 +25,7 @@ const initialState = {
     loading: false,
     allIngredientsFailToLoad: false,
     allIngredientsFailedMsg: '',
+    bun: null,
     currentOrderIngredients: [],
     ingredientsCounter: [{
         id: 0,
@@ -43,12 +44,13 @@ const initialState = {
 export const orderReducer = (state = initialState, action) => {
     switch (action.type) {
         case ADD_CURRENT_ORDER_INGREDIENTS: {
+
             return {
                 ...state,
                 currentDragIngredient: null,
                 ingredientsCounter:
                     (state.currentOrderIngredients.length &&
-                    state.ingredientsCounter.filter(x => x.id === action.data._id && !x.isBun).length > 0) ?
+                    state.ingredientsCounter.filter(x => x.id === action.data._id).length > 0) ?
                     [...state.ingredientsCounter].map(x =>
                         x.id === action.data._id ? {...x, count: ++x.count} : x
                     ) :
@@ -61,11 +63,12 @@ export const orderReducer = (state = initialState, action) => {
                         {id: action.data._id, isBun: action.data.type === 'bun',
                             count: action.data.type === 'bun' ? 2 : 1}],
 
+                bun:
+                    action.data.type === 'bun' ? action.data : state.bun,
+
                 currentOrderIngredients:
-                    (action.data.type === 'bun' &&
-                    state.currentOrderIngredients.filter(x => x.type === 'bun').length > 0) ?
-                        [...state.currentOrderIngredients.map(x => x.type === 'bun' ? action.data : x)] :
-                        [...state.currentOrderIngredients, action.data]
+                    action.data.type !== 'bun' ? [...state.currentOrderIngredients, action.data] :
+                    [...state.currentOrderIngredients]
             }
         }
 
@@ -159,13 +162,14 @@ export const orderReducer = (state = initialState, action) => {
             }
         }
         case ORDER_PRICE: {
+            const bunPrice = state.bun ? (state.bun.price * 2) : 0;
+            const mainPrice = state.currentOrderIngredients.length !== 0 ?
+                (state.currentOrderIngredients.map(x => x.price)
+                    .reduce((x, y) => x + y, 0)) : 0;
+            const finalPrice = bunPrice + mainPrice;
             return {
                 ...state,
-                orderPrice: state.currentOrderIngredients.length !== 0 ?
-                    state.currentOrderIngredients.map(x => x.price)
-                        .reduce((x, y) => x + y, 0) +
-                    ((state.currentOrderIngredients.filter(x => x.type === 'bun').length === 1) ?
-                    state.currentOrderIngredients.filter(x => x.type === 'bun')[0].price : 0) : 0
+                orderPrice: finalPrice
             }
         }
         default: {

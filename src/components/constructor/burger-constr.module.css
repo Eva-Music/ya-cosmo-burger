@@ -7,7 +7,7 @@
 .dragIngredients {
     align-items: center;
     display: flex;
-    cursor: grab;
+    cursor: move;
 }
 
 .target {
