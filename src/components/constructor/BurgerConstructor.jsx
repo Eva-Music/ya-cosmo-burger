@@ -1,40 +1,44 @@
-import {ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import React, {useContext, useEffect, useState} from "react";
+import {ConstructorElement} from "@ya.praktikum/react-developer-burger-ui-components";
+import React, {useCallback} from "react";
 import styles from "./burger-constr.module.css"
 import FinalPrice from "./FinalPrice";
 import PropTypes from "prop-types";
-import {IngredientsContext} from "../../services/burgerIngredients";
+import {useDispatch, useSelector} from "react-redux";
+import {useDrop} from "react-dnd";
+import MainIngredient from "./MainIngredient";
+import {CHANGE_CURRENT_ORDER_INGREDIENTS} from "../../services/actions/order";
 
-const BurgerConstructor = ({contentClose, orderContent, modalOpen}) => {
-    const {state, setState} = useContext(IngredientsContext);
+const BurgerConstructor = ({onDropHandler}) => {
 
-    const [bun, setBun] = useState(null);
-    const [middle, setMiddle] = useState({
-        middle: [],
+    const dispatch = useDispatch();
+
+    const {
+        currentOrderIngredients,
+        bun
+    } = useSelector(state => state.order);
+
+    const [{isOver}, dropTarget] = useDrop({
+        accept: "ingredient",
+        drop(itemId) {
+            onDropHandler(itemId);
+        },
+        collect: monitor => ({
+            isOver: monitor.isOver(),
+        })
     });
 
-    useEffect(() => {
-        clean();
-        state.ingredients.content && state.ingredients.content.forEach(d => {
-            if (d.type === 'bun'){
-                setBun(d);
-            } else {
-                setMiddle(prevState => ({
-                    middle: [...prevState.middle, d]
-                }))
-            }
-        });
-    }, [state.ingredients.content]);
 
-    const clean = () => {
-        setBun(null);
-        setMiddle({middle: []});
-    }
+    const moveCard = useCallback((dragIndex, hoverIndex) => {
+        dispatch({
+            type: CHANGE_CURRENT_ORDER_INGREDIENTS, dragIndex, hoverIndex
+        });
+    }, [currentOrderIngredients]);
 
     return (
         <div className='m-10'>
-            <ul style={{height: '500px'}} className={`${styles.construction} p-2`}>
-                {bun && <li className={styles.dragIngredients}>
+            <ul ref={dropTarget} style={{height: '500px'}} className={`${styles.construction} ${isOver && styles.target} p-2`}>
+                {bun != null &&
+                <li className={styles.dragIngredients}>
                     <div style={{width: 40}}>
                     </div>
                     <ConstructorElement
@@ -44,25 +48,18 @@ const BurgerConstructor = ({contentClose, orderContent, modalOpen}) => {
                         price={bun.price}
                         thumbnail={bun.image}
                     />
-                </li>}
+                </li>
+                }
 
                 <li className={`${styles.construction} ${styles.scrollIngredients}`}>
-                    {middle.middle && middle.middle.map(d => {
-                        return <section key={d._id} className={styles.dragIngredients}>
-                            <div style={{width: 40}}>
-                                <DragIcon type="primary"/>
-                            </div>
-                            <ConstructorElement
-                                text={d.name}
-                                price={d.price}
-                                thumbnail={d.image}
-                                handleClose={() => contentClose(d)}
-                            />
-                        </section>
+                    {currentOrderIngredients &&
+                    currentOrderIngredients.map((d, index) => {
+                        return <MainIngredient moveCard={moveCard} index={index} id={d.id} data={d} key={d.id}/>
                     })}
                 </li>
 
-                {bun && <li className={styles.dragIngredients}>
+                {bun !== null &&
+                <li className={styles.dragIngredients}>
                     <div style={{width: 40}}>
                     </div>
                     <ConstructorElement
@@ -72,32 +69,17 @@ const BurgerConstructor = ({contentClose, orderContent, modalOpen}) => {
                         price={bun.price}
                         thumbnail={bun.image}
                     />
-                </li>}
+                </li>
+                }
             </ul>
 
-            <FinalPrice orderContent={orderContent} modalOpen={modalOpen}/>
+            <FinalPrice/>
         </div>
     );
 }
 
 BurgerConstructor.propTypes = {
-    orderContent: PropTypes.func.isRequired,
-    state: PropTypes.arrayOf(
-        PropTypes.shape({
-            _id: PropTypes.string.isRequired,
-            name: PropTypes.string.isRequired,
-            type: PropTypes.string.isRequired,
-            proteins: PropTypes.number.isRequired,
-            fat: PropTypes.number.isRequired,
-            carbohydrates: PropTypes.number.isRequired,
-            calories: PropTypes.number.isRequired,
-            price: PropTypes.number.isRequired,
-            image: PropTypes.string.isRequired,
-            image_mobile: PropTypes.string.isRequired,
-            image_large: PropTypes.string.isRequired
-        })
-    ),
-    modalOpen: PropTypes.func.isRequired
+    onDropHandler: PropTypes.func.isRequired
 }
 
 export default BurgerConstructor;

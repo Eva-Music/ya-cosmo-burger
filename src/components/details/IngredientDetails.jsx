@@ -1,19 +1,23 @@
 import style from "./details.module.css";
 import React from "react";
-import PropTypes from "prop-types";
 import spinner from "../../images/spinner.svg";
+import {useSelector} from "react-redux";
 
-const IngredientDetails = ({data}) => {
+const IngredientDetails = () => {
+
+    const {
+        currentIngredient
+    } = useSelector(state => state.order);
 
     return (
         <div className={style.main}>
             <div>
                 <p className="text text_type_main-medium">Детали ингредиента</p>
             </div>
-            {data ? <section className={`p-10 ${style.main}`}>
-                <img src={data.image_large} alt='ingredient'/>
+            {currentIngredient ? <section className={`p-10 ${style.main}`}>
+                <img src={currentIngredient.image_large} alt='ingredient'/>
                 <div className={"mt-5"}>
-                    <p className='text text_type_main-medium'>{data.name}</p>
+                    <p className='text text_type_main-medium'>{currentIngredient.name}</p>
                 </div>
             </section> : <img src={spinner} alt="load"/>}
 
@@ -25,7 +29,7 @@ const IngredientDetails = ({data}) => {
                     </div>
                     <div>
                         <p className="text text_type_digits-default text_color_inactive">
-                            {data.calories} </p>
+                            {currentIngredient.calories} </p>
                     </div>
                 </div>
                 <div className={style.main}>
@@ -35,7 +39,7 @@ const IngredientDetails = ({data}) => {
                     </div>
                     <div>
                         <p className="text text_type_digits-default text_color_inactive">
-                            {data.proteins} </p>
+                            {currentIngredient.proteins} </p>
                     </div>
                 </div>
                 <div className={style.main}>
@@ -45,7 +49,7 @@ const IngredientDetails = ({data}) => {
                     </div>
                     <div>
                         <p className="text text_type_digits-default text_color_inactive">
-                            {data.fat} </p>
+                            {currentIngredient.fat} </p>
                     </div>
                 </div>
                 <div className={style.main}>
@@ -55,29 +59,13 @@ const IngredientDetails = ({data}) => {
                     </div>
                     <div>
                         <p className="text text_type_digits-default text_color_inactive">
-                            {data.carbohydrates} </p>
+                            {currentIngredient.carbohydrates} </p>
                     </div>
                 </div>
             </div>
 
         </div>
     );
-}
-
-IngredientDetails.propTypes = {
-    data: PropTypes.shape({
-            _id: PropTypes.string.isRequired,
-            name: PropTypes.string.isRequired,
-            type: PropTypes.string.isRequired,
-            proteins: PropTypes.number.isRequired,
-            fat: PropTypes.number.isRequired,
-            carbohydrates: PropTypes.number.isRequired,
-            calories: PropTypes.number.isRequired,
-            price: PropTypes.number.isRequired,
-            image: PropTypes.string.isRequired,
-            image_mobile: PropTypes.string.isRequired,
-            image_large: PropTypes.string.isRequired
-    }).isRequired
 }
 
 export default IngredientDetails;
