@@ -17,7 +17,12 @@ import {
     ORDER_PRICE,
     DELETE_ORDER_NUMBER,
 
-    ADD_DRAG_INGREDIENT
+    ADD_DRAG_INGREDIENT,
+    RESET_PASSWORD_REQUEST,
+    RESET_PASSWORD_SUCCESS,
+    RESET_PASSWORD_FAILED,
+    RESET_EMAIL_SUCCESS,
+    RESET_EMAIL_FAILED, RESET_REQUEST
 } from '../actions/order';
 
 const initialState = {
@@ -40,6 +45,21 @@ const initialState = {
     currentOrderNumber: 0,
     orderPriceFailedMsg: '',
     ingredientCounter: 0,
+
+    resetLoading: true,
+    resetPasswordSuccess: undefined,
+    resetPasswordFailed: undefined,
+
+    resetEmailSuccess: undefined,
+    resetEmailFailed: undefined,
+
+    user: {
+        name: '',
+        login: '',
+        password: ''
+    },
+
+
 };
 
 export const orderReducer = (state = initialState, action) => {
@@ -100,8 +120,8 @@ export const orderReducer = (state = initialState, action) => {
         case SET_CURRENT_INGREDIENT: {
             return {
                 ...state,
-                modalOpen: true,
-                modalContent: 'ingredients',
+                // modalOpen: true,
+                // modalContent: 'ingredients',
                 currentIngredient: action.data
             }
         }
@@ -175,6 +195,47 @@ export const orderReducer = (state = initialState, action) => {
                 orderPrice: finalPrice
             }
         }
+
+        case RESET_REQUEST: {
+            return {
+                ...state,
+                resetLoading: true,
+                resetPasswordSuccess: undefined,
+                resetPasswordFailed: undefined,
+                resetEmailSuccess: undefined,
+                resetEmailFailed: undefined
+            }
+        }
+        case RESET_PASSWORD_SUCCESS: {
+            return {
+                ...state,
+                resetPasswordSuccess: action.value,
+                resetLoading: false
+            }
+        }
+        case RESET_PASSWORD_FAILED: {
+            return {
+                ...state,
+                resetPasswordFailed: true,
+                resetLoading: false
+            }
+        }
+
+        case RESET_EMAIL_SUCCESS: {
+            return {
+                ...state,
+                resetEmailSuccess: action.value,
+                resetLoading: false
+            }
+        }
+        case RESET_EMAIL_FAILED: {
+            return {
+                ...state,
+                resetEmailFailed: true,
+                resetLoading: false
+            }
+        }
+
         default: {
             return state;
         }

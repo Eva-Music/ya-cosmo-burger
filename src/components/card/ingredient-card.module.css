@@ -4,6 +4,12 @@
     cursor: pointer;
 }
 
+.link {
+
+    text-decoration: none;
+    color: white;
+}
+
 .mark {
     position: relative;
     display: flex;

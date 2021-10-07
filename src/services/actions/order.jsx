@@ -1,4 +1,4 @@
-import { getIngredientsRequest, getOrderNumberRequest } from '../api';
+import {getIngredientsRequest, getOrderNumberRequest, postEmailToReset, postPasswordToReset} from '../api';
 
 export const GET_LIST_INGREDIENTS_REQUEST = 'GET_LIST_INGREDIENTS_REQUEST';
 export const GET_LIST_INGREDIENTS_SUCCESS = 'GET_LIST_INGREDIENTS_SUCCESS';
@@ -17,7 +17,16 @@ export const GET_ORDER_NUMBER_FAILED = 'GET_ORDER_NUMBER_FAILED';
 export const DELETE_ORDER_NUMBER = 'DELETE_ORDER_NUMBER';
 export const ADD_DRAG_INGREDIENT = 'ADD_DRAG_INGREDIENT';
 
+export const RESET_REQUEST = 'RESET_REQUEST';
+export const RESET_PASSWORD_SUCCESS = 'RESET_PASSWORD_SUCCESS';
+export const RESET_PASSWORD_FAILED = 'RESET_PASSWORD_FAILED';
+
+export const RESET_EMAIL_SUCCESS = 'RESET_EMAIL_SUCCESS';
+export const RESET_EMAIL_FAILED = 'RESET_EMAIL_FAILED';
+
 export const ORDER_PRICE = 'ORDER_PRICE';
+
+export const SET_USER = 'SET_USER';
 
 export function getListIngredients() {
     return function(dispatch) {
@@ -67,4 +76,40 @@ export const getOrderNumber = (ingredients) => async (dispatch)  => {
                 message: err.message
             });
         });
+}
+
+export const forgotPassword = (email) => async (dispatch) => {
+    dispatch({
+        type: RESET_REQUEST,
+    });
+    postEmailToReset(email).then(res => {
+        if (res) {
+            dispatch({
+                type: RESET_EMAIL_SUCCESS,
+                value: res.success
+            })
+        }
+    }).catch(err => {
+        dispatch({
+            type: RESET_EMAIL_FAILED,
+        });
+    })
+}
+
+export const resetPassword = (password, code) => async (dispatch) => {
+    dispatch({
+        type: RESET_REQUEST,
+    });
+    postPasswordToReset(password, code).then(res => {
+        if (res) {
+            dispatch({
+                type: RESET_PASSWORD_SUCCESS,
+                value: res.success
+            })
+        }
+    }).catch(err => {
+        dispatch({
+            type: RESET_PASSWORD_FAILED,
+        });
+    })
 }

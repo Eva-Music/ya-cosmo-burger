@@ -1,0 +1,12 @@
+.sign{
+    display: flex;
+    flex-direction:  column;
+    align-items: center;
+    margin-top: 150px;
+    justify-content: space-evenly;
+}
+
+p{
+    align-self: center;
+    margin-top: 40px;
+}

@@ -8,6 +8,7 @@
 .menuItem{
     display: flex;
     align-items: center;
+    cursor: pointer;
 }
 
 .text{
