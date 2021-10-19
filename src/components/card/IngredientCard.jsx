@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import styles from './ingredient-card.module.css';
 import {Counter, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import {useDispatch, useSelector} from "react-redux";
-import { ADD_DRAG_INGREDIENT, SET_CURRENT_INGREDIENT} from "../../services/actions/order";
+import {ADD_DRAG_INGREDIENT, SET_CURRENT_INGREDIENT, SET_MODAL_STATUS} from "../../services/actions/order";
 import {useDrag} from "react-dnd";
 import {Link} from "react-router-dom";
 import {useHistory} from "react-router";
@@ -16,7 +16,8 @@ const IngredientCard = ({data}) => {
 
     const {
         ingredientsCounter,
-        currentOrderIngredients
+        currentOrderIngredients,
+        currentIngredient
     } = useSelector(state => state.order);
 
     const handleIngredientContent = (data) => {
@@ -24,6 +25,12 @@ const IngredientCard = ({data}) => {
             type: SET_CURRENT_INGREDIENT,
             data
         });
+        dispatch( {
+            type: SET_MODAL_STATUS,
+            status: true
+            }
+        )
+        console.log(currentIngredient)
     }
 
     const [{isDrag, opacity}, dragRef] = useDrag({
@@ -53,7 +60,8 @@ const IngredientCard = ({data}) => {
     return (
         <Link
             to={{ pathname: `/ingredients/${_id}`, state: history.location.state }}
-            className={styles.link}>
+            className={styles.link}
+        >
             <div className={styles.card} style={{opacity: opacity}}
                  onClick={() => {handleIngredientContent(data)}}>
 

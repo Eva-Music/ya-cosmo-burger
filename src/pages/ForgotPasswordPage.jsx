@@ -16,7 +16,7 @@ const ForgotPasswordPage = () => {
 
     const [email, setEmail] = useState('');
 
-    const handleButtonClick = () => {
+    const handleOnSubmit = () => {
         dispatch(forgotPassword(email));
     }
 
@@ -29,9 +29,7 @@ const ForgotPasswordPage = () => {
 
     return (
         <div>
-            <AppHeader/>
-
-            <section style={{height: '350px'}} className={styles.sign}>
+            <form style={{height: '350px'}} onSubmit={handleOnSubmit} className={styles.sign}>
                 <p className="text text_type_main-medium">
                     Восстановление пароля
                 </p>
@@ -41,14 +39,14 @@ const ForgotPasswordPage = () => {
                     onChange={e => setEmail(e.target.value)}
                     value={email}
                 />
-                <Button onClick={handleButtonClick} type="primary" size="medium">
+                <Button type="primary" size="medium">
                     Восстановить
                 </Button>
 
                 <p className="text_type_main-default text_color_inactive">
                     Вспомнили пароль? <Link to='/login'>Войти</Link>
                 </p>
-            </section>
+            </form>
         </div>
     )
 }

@@ -1,7 +1,7 @@
-import { useContext, useState, createContext } from 'react';
-import { deleteCookie, setCookie } from './utils';
+import { useContext, createContext } from 'react';
 import React from 'react';
-import {getUserRequest, loginRequest, logoutRequest, postRegister, refreshTokenRequest} from "./api";
+import {useDispatch, useSelector} from "react-redux";
+import {getUserData, logIn, logoutData, refreshTokenData, userRegister} from "./actions/order";
 
 const AuthContext = createContext(undefined);
 
@@ -16,79 +16,35 @@ export function useAuth() {
 }
 
 export function useProvideAuth() {
-    const [user, setUser] = useState({
-        email: '',
-        password: '',
-    });
-    const [tokens, setTokens] = useState({
-        accessToken: '',
-        refreshToken: '',
-    });
 
-    // const getUser = async (email, password, name) => {
-    //     return await postRegister(email, password, name)
-    //         .then(data => {
-    //             if (data.success) {
-    //                 setUser({ email: email, password: password});
-    //                 setTokens({
-    //                     accessToken: data.accessToken.split('Bearer ')[1],
-    //                     refreshToken: data.refreshToken})
-    //                 if (tokens.refreshToken){
-    //                     setCookie('token', tokens.refreshToken);
-    //                 }
-    //             }
-    //             return data.success;
-    //         });
-    // };
+    const dispatch = useDispatch();
 
-    const getUser = async () => {
-        return await getUserRequest()
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    setUser({ ...data});
-                }
-                return data.success;
-            });
-    };
+    const {
+        user,
+    } = useSelector(state => state.order);
 
-    const signIn = async (user, tokens) => {
-        return await loginRequest(user.email, user.password, tokens.accessToken)
-            .then(data => {
-                if (data.success) {
-                    setTokens({
-                        accessToken: data.accessToken.split('Bearer ')[1],
-                        refreshToken: data.refreshToken
-                    })
-                }
-
-                return data.success;
-            })
-    };
-
-    const refreshToken = async (tokens) => {
-        return await refreshTokenRequest(tokens.refreshToken)
-            .then(data => {
-                if (data.success) {
-                    setTokens({
-                        accessToken: data.accessToken.split('Bearer ')[1],
-                        refreshToken: data.refreshToken
-                    })
-                }
-
-                return data.success;
-            })
+   const register = async () => {
+       return dispatch(userRegister(user.email, user.password, user.name));
     }
 
-    const signOut = async (tokens) => {
-        await logoutRequest(tokens.refreshToken);
-        setUser(null);
-        deleteCookie('token');
+    const getUser = async () => {
+        dispatch(getUserData(user.accessToken))
+    };
+
+    const signIn = async () => {
+        return dispatch(logIn(user.email, user.password));
+    };
+
+    const refreshToken = async () => {
+        dispatch(refreshTokenData(user.refreshToken));
+    }
+
+    const signOut = async () => {
+        dispatch(logoutData(user.refreshToken));
     };
 
     return {
-        user,
-        tokens,
+        register,
         getUser,
         signIn,
         refreshToken,

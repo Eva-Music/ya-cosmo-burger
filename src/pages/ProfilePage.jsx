@@ -1,14 +1,16 @@
-import React, {useEffect, useState} from "react";
-import AppHeader from "../components/header/AppHeader";
+import React, {useState} from "react";
 import styles from './profile.module.css';
 import {Input} from "@ya.praktikum/react-developer-burger-ui-components";
-import {useAuth} from "../services/auth";
+import {useDispatch, useSelector} from "react-redux";
+import {SET_USER} from "../services/actions/order";
 
 const ProfilePage = () => {
 
-    let {getUser, ...auth} = useAuth();
+    const {
+        user,
+    } = useSelector(state => state.order);
 
-    const user = async () => await getUser();
+    const dispatch = useDispatch();
 
     const [params, setParams] = useState({
         name: '',
@@ -16,15 +18,17 @@ const ProfilePage = () => {
         password: ''
     });
 
-    useEffect(() => {
-        const {email, login} = user();
-        setParams({...params, email: email, name: login})
-    }, [])
+    const handleOnSubmit = () => {
+        dispatch({
+            type: SET_USER,
+            name: params.name,
+            email: params.email,
+            password: params.password
+        });
+    }
 
     return (
         <div>
-            <AppHeader/>
-
             <div className={styles.wrapper}>
                 <div className={styles.container}>
                     <section style={{height: '250px'}} className={styles.main}>
@@ -43,10 +47,10 @@ const ProfilePage = () => {
                             </p>
                         </div>
 
-                        <div className={styles.block}>
+                        <form onSubmit={handleOnSubmit} className={styles.block}>
                             <Input
                                 type={'text'}
-                                placeholder={'Имя'}
+                                placeholder={user.name}
                                 onChange={e => setParams({
                                     ...params,
                                     name: e.target.value
@@ -57,7 +61,7 @@ const ProfilePage = () => {
 
                             <Input
                                 type={'email'}
-                                placeholder={'Логин'}
+                                placeholder={user.email}
                                 onChange={e => setParams({
                                     ...params,
                                     email: e.target.value
@@ -68,7 +72,7 @@ const ProfilePage = () => {
 
                             <Input
                                 type={'password'}
-                                placeholder={'Пароль'}
+                                placeholder={user.password}
                                 onChange={e => setParams({
                                     ...params,
                                     password: e.target.value
@@ -76,7 +80,7 @@ const ProfilePage = () => {
                                 value={params.password}
                                 icon={'EditIcon'}
                             />
-                        </div>
+                        </form>
 
                     </section>
                     <div className={styles.main}>

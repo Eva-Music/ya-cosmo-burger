@@ -11,6 +11,18 @@
     cursor: pointer;
 }
 
-.text{
+.link{
     margin-left: 10px;
+    text-decoration: none;
+    outline : none;
+    pointer-events:none;
+    align-self: center;
+}
+
+.link:active{
+    margin-left: 10px;
+    text-decoration: none;
+    outline : none;
+    pointer-events:none;
+    align-self: center;
 }

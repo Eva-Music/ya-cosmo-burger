@@ -1,21 +1,40 @@
 import styles from './login.module.css';
-import AppHeader from "../components/header/AppHeader";
 import React, {useState} from "react";
 import {Button, Input} from "@ya.praktikum/react-developer-burger-ui-components";
 import {Link} from "react-router-dom";
+import {SET_USER} from "../services/actions/order";
+import {useDispatch} from "react-redux";
+import {useAuth} from "../services/auth";
 
 const RegistryPage = () => {
+
+    let { register, ...auth } = useAuth();
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    return (
-        <div>
-            <AppHeader/>
+    const dispatch = useDispatch();
 
-            <section style={{height: '500px'}} className={styles.sign}>
-                <p className="text text_type_main-medium">
+    const handleOnSubmit = (e) => {
+        dispatch({
+            type: SET_USER,
+            name: name,
+            email: email,
+            password: password
+        });
+
+        init();
+        e.preventDefault();
+    }
+
+    const init = async () => {
+        await register();
+    };
+
+    return (
+            <form style={{height: '500px'}} onSubmit={handleOnSubmit} className={styles.sign}>
+                <p className={`${styles.head} text text_type_main-medium`}>
                     Регистрация
                 </p>
                 <Input
@@ -41,11 +60,12 @@ const RegistryPage = () => {
                     Зарегистрироваться
                 </Button>
 
-                <p className="text_type_main-default text_color_inactive">
-                    Уже зарегистрированы? <Link to='/login'>Войти</Link>
-                </p>
-            </section>
-        </div>
+                <div>
+                    <p className="text_type_main-default text_color_inactive">
+                        Уже зарегистрированы? <Link to='/login'>Войти</Link>
+                    </p>
+                </div>
+            </form>
     )
 }
 

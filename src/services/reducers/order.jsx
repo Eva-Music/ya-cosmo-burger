@@ -18,11 +18,11 @@ import {
     DELETE_ORDER_NUMBER,
 
     ADD_DRAG_INGREDIENT,
-    RESET_PASSWORD_REQUEST,
     RESET_PASSWORD_SUCCESS,
     RESET_PASSWORD_FAILED,
     RESET_EMAIL_SUCCESS,
-    RESET_EMAIL_FAILED, RESET_REQUEST
+    SET_MODAL_STATUS,
+    RESET_EMAIL_FAILED, RESET_REQUEST, SET_USER, SET_USER_LOGIN, SET_USER_REGISTRY, CLEAN_USER, USER_ERROR
 } from '../actions/order';
 
 const initialState = {
@@ -55,17 +55,67 @@ const initialState = {
 
     user: {
         name: '',
-        login: '',
-        password: ''
+        email: '',
+        password: '',
+        accessToken: '', // используется в запросах к эндпоинту auth/user для получения и обновления
+                        // данных пользователя. Передавайте accessToken в заголовке authorization.
+                        // Срок жизни токена — 20 минут.
+        refreshToken: '' //сохраняйте в localStorage или в куки. Токен используется
+                        // для выхода из системы и для получения нового accessToken,
+                        // если последний перестал подходить и просрочился.
     },
-
-
+    userError: false
 };
 
 export const orderReducer = (state = initialState, action) => {
     switch (action.type) {
-        case ADD_CURRENT_ORDER_INGREDIENTS: {
+        case SET_USER_LOGIN: {
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    email: action.email,
+                    password: action.password
+                }
+            }
+        }
+        case SET_USER_REGISTRY: {
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    accessToken: action.accessToken,
+                    refreshToken: action.refreshToken,
+                    name: action.name
+                }
+            }
+        }
 
+        case SET_USER: {
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    name: action.name,
+                    email: action.email,
+                    password: action.password
+                }
+            }
+        }
+        case CLEAN_USER: {
+            return {
+                ...state,
+                user: {}
+            }
+        }
+        case USER_ERROR: {
+            return {
+                ...state,
+                userError: action.value
+            }
+        }
+
+        case ADD_CURRENT_ORDER_INGREDIENTS: {
             return {
                 ...state,
                 currentDragIngredient: null,
@@ -120,9 +170,14 @@ export const orderReducer = (state = initialState, action) => {
         case SET_CURRENT_INGREDIENT: {
             return {
                 ...state,
-                // modalOpen: true,
-                // modalContent: 'ingredients',
+                modalContent: 'ingredients',
                 currentIngredient: action.data
+            }
+        }
+        case SET_MODAL_STATUS: {
+            return {
+                ...state,
+                modalOpen: action.status
             }
         }
         case DELETE_CURRENT_INGREDIENT: {

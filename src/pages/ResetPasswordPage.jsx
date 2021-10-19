@@ -1,5 +1,4 @@
 import styles from './login.module.css';
-import AppHeader from "../components/header/AppHeader";
 import React, {useState} from "react";
 import {Button, Input} from "@ya.praktikum/react-developer-burger-ui-components";
 import {Link, Redirect} from "react-router-dom";
@@ -30,9 +29,7 @@ const ResetPasswordPage = () => {
 
     return (
         <div>
-            <AppHeader/>
-
-            <section style={{height: '350px'}} className={styles.sign}>
+            <form style={{height: '350px'}} onSubmit={handleButtonClick} className={styles.sign}>
                 <p className="text text_type_main-medium">
                     Восстановление пароля
                 </p>
@@ -49,15 +46,14 @@ const ResetPasswordPage = () => {
                     onChange={e => setCode(e.target.value)}
                     value={code}
                 />
-                <Button onClick={handleButtonClick}
-                        type="primary" size="medium">
+                <Button type="primary" size="medium">
                     Сохранить
                 </Button>
 
                 <p className="text_type_main-default text_color_inactive">
                     Вспомнили пароль? <Link to='/login'>Войти</Link>
                 </p>
-            </section>
+            </form>
         </div>
     )
 }

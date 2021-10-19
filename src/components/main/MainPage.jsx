@@ -1,33 +1,29 @@
 import {useDispatch, useSelector} from "react-redux";
-import React, {useEffect} from "react";
-import {ADD_CURRENT_ORDER_INGREDIENTS, getListIngredients} from "../../services/actions/order";
+import React from "react";
+import {
+    ADD_CURRENT_ORDER_INGREDIENTS,
+    DELETE_CURRENT_INGREDIENT, DELETE_ORDER_NUMBER,
+} from "../../services/actions/order";
 import Modal from "../modal/Modal";
 import IngredientDetails from "../details/IngredientDetails";
 import OrderDetails from "../details/OrderDetails";
 import style from "./main.module.css";
-import AppHeader from "../header/AppHeader";
 import {DndProvider} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
 import BurgerIngredients from "../ingredients/BurgerIngredients";
 import BurgerConstructor from "../constructor/BurgerConstructor";
+import { useHistory } from "react-router-dom";
 
 const MainPage = () => {
 
     const dispatch = useDispatch();
+    const history = useHistory();
 
     const {
-        allIngredientsData,
         modalOpen,
         modalContent,
         currentDragIngredient,
     } = useSelector(state => state.order);
-
-    useEffect(
-        () => {
-            if (!allIngredientsData.length) dispatch(getListIngredients());
-        },
-        [dispatch]
-    );
 
     const handleDrop = () => {
         const data = currentDragIngredient;
@@ -37,15 +33,26 @@ const MainPage = () => {
         });
     };
 
+    const onCLose = () => {
+        dispatch({
+            type: DELETE_CURRENT_INGREDIENT,
+        });
+        dispatch({
+            type: DELETE_ORDER_NUMBER,
+        });
+
+        history.push('/');
+    }
+
     const modal =
-        <Modal isVisible={modalOpen}>
+         <Modal isVisible={modalOpen} onClose={onCLose}>
             {modalContent === 'ingredients' && <IngredientDetails/>}
+
             {modalContent === 'order' && <OrderDetails/>}
         </Modal>
 
     return (
         <div className={style.main}>
-            <AppHeader/>
             {modalOpen && modal}
 
             <section className={style.mainSection}>
