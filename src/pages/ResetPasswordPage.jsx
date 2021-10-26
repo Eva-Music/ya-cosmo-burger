@@ -16,8 +16,9 @@ const ResetPasswordPage = () => {
         resetPasswordSuccess
     } = useSelector(state => state.order);
 
-    const handleButtonClick = () => {
+    const handleButtonClick = (e) => {
         dispatch(resetPassword(password, code));
+        e.preventDefault();
     }
 
     if (resetPasswordSuccess) {
@@ -28,9 +29,8 @@ const ResetPasswordPage = () => {
     }
 
     return (
-        <div>
-            <form style={{height: '350px'}} onSubmit={handleButtonClick} className={styles.sign}>
-                <p className="text text_type_main-medium">
+            <form style={{height: '500px'}} onSubmit={handleButtonClick} className={styles.sign}>
+                <p className={`${styles.head} text text_type_main-medium`}>
                     Восстановление пароля
                 </p>
                 <Input
@@ -50,11 +50,10 @@ const ResetPasswordPage = () => {
                     Сохранить
                 </Button>
 
-                <p className="text_type_main-default text_color_inactive">
+                <p className={`${styles.head} text_type_main-default text_color_inactive`}>
                     Вспомнили пароль? <Link to='/login'>Войти</Link>
                 </p>
             </form>
-        </div>
     )
 }
 

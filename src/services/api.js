@@ -12,7 +12,10 @@ const get_update_user = 'https://norma.nomoreparties.space/api/auth/user'; //- �
 
 export const getIngredientsRequest = async () => {
         return await fetch(url).then(res => {
-                checkResponse(res);
+                if (res.ok) {
+                        return res.json();
+                }
+                return Promise.reject(`Ошибка ${res.status}`);
         }).catch(err => {
                 Promise.reject(`Can't get ingredients: ${err}`);
         })
@@ -24,7 +27,10 @@ export const getOrderNumberRequest = async (ingredients) => {
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({"ingredients": ingredients})
         }).then(res => {
-                checkResponse(res);
+                if (res.ok) {
+                        return res.json();
+                }
+                return Promise.reject(`Ошибка ${res.status}`);
         }).catch(err => {
                 Promise.reject(`Can't get order number: ${err}`);
         })
@@ -36,7 +42,10 @@ export const postEmailToReset = async (email) => {
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({"email": email})
         }).then(res => {
-                checkResponse(res);
+                if (res.ok) {
+                        return res.json();
+                }
+                return Promise.reject(`Ошибка ${res.status}`);
         }).catch(err => {
                 Promise.reject(`Can't post email to reset: ${err}`);
         })
@@ -48,7 +57,10 @@ export const postPasswordToReset = async (password, code) => {
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({"password": password, "token": code})
         }).then(res => {
-                checkResponse(res);
+                if (res.ok) {
+                        return res.json();
+                }
+                return Promise.reject(`Ошибка ${res.status}`);
         }).catch(err => {
                 Promise.reject(`Can't post password to reset: ${err}`);
         })
@@ -66,7 +78,10 @@ export const postRegister = async (email, password, name) => {
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({"email": email, "password": password, "name": name})
         }).then(res => {
-                checkResponse(res);
+                if (res.ok) {
+                        return res.json();
+                }
+                return Promise.reject(`Ошибка ${res.status}`);
         }).catch(err => {
                 Promise.reject(`Can't register: ${err}`);
         })
@@ -85,7 +100,10 @@ export const loginRequest = async (email, password) => {
                 referrerPolicy: 'no-referrer',
                 body: JSON.stringify({"email": email, "password": password})
         }).then(res => {
-                checkResponse(res);
+                if (res.ok) {
+                        return res.json();
+                }
+                return Promise.reject(`Ошибка ${res.status}`);
         }).catch(err => {
                 Promise.reject(`Can't login: ${err}`);
         })
@@ -104,7 +122,10 @@ export const getUserRequest = async (token) =>
             redirect: 'follow',
             referrerPolicy: 'no-referrer'
     }).then(res => {
-            checkResponse(res);
+            if (res.ok) {
+                    return res.json();
+            }
+            return Promise.reject(`Ошибка ${res.status}`);
     }).catch(err => {
             Promise.reject(`Can't get user request: ${err}`);
     })
@@ -122,7 +143,10 @@ export const refreshTokenRequest = async (token) => {
                 referrerPolicy: 'no-referrer',
                 body: JSON.stringify({"token": `{{${token}}}`})
         }).then(res => {
-                checkResponse(res);
+                if (res.ok) {
+                        return res.json();
+                }
+                return Promise.reject(`Ошибка ${res.status}`);
         }).catch(err => {
                 Promise.reject(`Can't refresh token: ${err}`);
         })
@@ -141,15 +165,11 @@ export const logoutRequest = async (token) => {
                 referrerPolicy: 'no-referrer',
                 body: JSON.stringify({"token": `{{${token}}}`})
         }).then(res => {
-                checkResponse(res);
+                if (res.ok) {
+                        return res.json();
+                }
+                return Promise.reject(`Ошибка ${res.status}`);
         }).catch(err => {
                 Promise.reject(`Can't logout: ${err}`);
         })
 };
-
-const checkResponse = (res) => {
-        if (res.ok) {
-                return res.json();
-        }
-        return Promise.reject(`Ошибка ${res.status}`);
-}

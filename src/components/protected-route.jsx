@@ -2,13 +2,14 @@ import { useAuth } from '../services/auth';
 import { Redirect, Route, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { useSelector} from "react-redux";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
 
 export function ProtectedRoute({ children, ...rest }) {
-    let { signIn, ...auth } = useAuth();
+    let { signIn, getUser, ...auth } = useAuth();
     const [isUserLoaded, setUserLoaded] = useState(false);
 
     const notAllowedForAuthUser = ['/login', '/register', '/forgot-password', '/reset-password'];
-    const notAllowedForNotAuthUser = ['/profile'];
+    const notAllowedForNotAuthUser = ['/profile', '/reset-password'];
 
     const {
         user,
@@ -23,10 +24,20 @@ export function ProtectedRoute({ children, ...rest }) {
         />)
     }
 
+    const init = async () => {
+        await getUser();
+        if (user.email !== ''){
+            setUserLoaded(true);
+        }
+    };
+
+    useEffect(() => {
+        init();
+    }, []);
+
     useEffect(() => {
         user.email !== '' && setUserLoaded(true);
     }, [user]);
-
 
     return (
         <Route
@@ -43,8 +54,16 @@ export function ProtectedRoute({ children, ...rest }) {
                     }
                 } else {
                     if (notAllowedForNotAuthUser.filter(p => rest.path.indexOf(p) !== -1).length === 0) {
+                        if (location.pathname === '/forgot-password'){
+                            redirectTo(location.pathname, location);
+                        }
                         return (children)
                     } else {
+                        if (location.state &&
+                            location.state.from.pathname === '/forgot-password' &&
+                            location.pathname === '/reset-password'){
+                            return (<ResetPasswordPage />);
+                        }
                         return redirectTo('/login', location);
                     }
                 }
