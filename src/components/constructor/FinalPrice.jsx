@@ -3,16 +3,30 @@ import {Button, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-comp
 import styles from './final-price.module.css'
 import {useDispatch, useSelector} from "react-redux";
 import {getOrderNumber, ORDER_PRICE} from "../../services/actions/order";
+import {useAuth} from "../../services/auth";
+import {Redirect, useHistory, useLocation} from "react-router-dom";
 
 const FinalPrice = () => {
+
+    let { getUser, ...auth } = useAuth();
+    const location = useLocation();
+    const history = useHistory();
 
     const {
         currentOrderIngredients,
         orderPrice,
-        bun
+        bun,
+        user
     } = useSelector(state => state.order);
 
     const dispatch = useDispatch();
+
+    const init = async () => {
+        user.accessToken && await getUser();
+        if (user.email === ''){
+            history.replace('/login');
+        }
+    };
 
     useEffect(() => {
         if (currentOrderIngredients.length !== 0) {
@@ -23,6 +37,7 @@ const FinalPrice = () => {
     }, [currentOrderIngredients]);
 
     const openOrderModal = () => {
+        init();
         return bun && dispatch(getOrderNumber(currentOrderIngredients));
     }
 

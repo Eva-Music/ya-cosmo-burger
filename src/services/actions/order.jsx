@@ -127,8 +127,7 @@ export const resetPassword = (password, code) => async (dispatch) => {
 }
 
 export const userRegister = (email, password, name) => async (dispatch) => {
-    postRegister(email, password, name).then(res => res.json())
-        .then(data => {
+    postRegister(email, password, name).then(data => {
             if (data.success) {
                 console.log(data);
                 dispatch({
@@ -152,8 +151,7 @@ export const userRegister = (email, password, name) => async (dispatch) => {
 }
 
 export const logIn = (email, password) => async (dispatch) => {
-    loginRequest(email, password).then(res => res.json())
-        .then(data => {
+    loginRequest(email, password).then(data => {
             if (data.success) {
                 dispatch({
                     type: SET_USER_REGISTRY,
@@ -176,8 +174,7 @@ export const logIn = (email, password) => async (dispatch) => {
 }
 
 export const getUserData = (token) => async (dispatch) => {
-    getUserRequest(token).then(res => res.json())
-        .then(data => {
+    getUserRequest(token).then(data => {
             if (data.success) {
                 dispatch({
                     type: SET_USER,
@@ -195,8 +192,7 @@ export const getUserData = (token) => async (dispatch) => {
 }
 
 export const refreshTokenData = (token) => async (dispatch) => {
-    refreshTokenRequest(token).then(res => res.json())
-        .then(data => {
+    refreshTokenRequest(token).then(data => {
             if (data.success) {
                 dispatch({
                     type: SET_USER,
@@ -214,8 +210,7 @@ export const refreshTokenData = (token) => async (dispatch) => {
 }
 
 export const logoutData = (token) => async (dispatch) => {
-    logoutRequest(token).then(res => res.json())
-        .then(data => {
+    logoutRequest(token).then(data => {
             if (data.success) {
                 dispatch({
                     type: CLEAN_USER

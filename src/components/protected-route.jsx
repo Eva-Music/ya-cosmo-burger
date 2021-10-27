@@ -25,7 +25,7 @@ export function ProtectedRoute({ children, ...rest }) {
     }
 
     const init = async () => {
-        await getUser();
+        user.accessToken && await getUser();
         if (user.email !== ''){
             setUserLoaded(true);
         }
@@ -48,7 +48,7 @@ export function ProtectedRoute({ children, ...rest }) {
                     if (notAllowedForAuthUser.filter(p => p === rest.path).length === 0) {
                         return (children)
                     } else {
-                        return location.state.from.pathname ?
+                        return location.state && location.state.from.pathname ?
                             redirectTo(location.state.from.pathname, location) :
                             redirectTo('/', location);
                     }

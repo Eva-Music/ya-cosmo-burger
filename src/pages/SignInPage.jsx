@@ -1,5 +1,5 @@
 import styles from './login.module.css';
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Input} from "@ya.praktikum/react-developer-burger-ui-components";
 import {Link, useHistory} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
@@ -26,9 +26,14 @@ const SignInPage = () => {
             password: password
         });
 
-        init();
         e.preventDefault();
     }
+
+    useEffect(() => {
+        if (user.email !== ''){
+            init();
+        }
+    }, [user])
 
     const init = async () => {
         await signIn();
