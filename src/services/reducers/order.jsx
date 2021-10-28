@@ -21,7 +21,7 @@ import {
     RESET_PASSWORD_SUCCESS,
     RESET_PASSWORD_FAILED,
     RESET_EMAIL_SUCCESS,
-    SET_MODAL_STATUS,
+    SET_MODAL_STATUS, SET_USER_TOKEN,
     RESET_EMAIL_FAILED, RESET_REQUEST, SET_USER, SET_USER_LOGIN, SET_USER_REGISTRY, CLEAN_USER, USER_ERROR
 } from '../actions/order';
 
@@ -79,6 +79,7 @@ export const orderReducer = (state = initialState, action) => {
                 }
             }
         }
+
         case SET_USER_REGISTRY: {
             return {
                 ...state,
@@ -87,6 +88,17 @@ export const orderReducer = (state = initialState, action) => {
                     accessToken: action.accessToken,
                     refreshToken: action.refreshToken,
                     name: action.name
+                }
+            }
+        }
+
+        case SET_USER_TOKEN: {
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    accessToken: action.accessToken,
+                    refreshToken: action.refreshToken,
                 }
             }
         }

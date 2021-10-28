@@ -24,20 +24,20 @@ export function useProvideAuth() {
     } = useSelector(state => state.order);
 
    const register = async () => {
-       return dispatch(userRegister(user.email, user.password, user.name));
-    }
+       dispatch(userRegister(user.email, user.password, user.name));
+    };
 
     const getUser = async () => {
         dispatch(getUserData(user.accessToken))
     };
 
     const signIn = async () => {
-        return dispatch(logIn(user.email, user.password));
+        dispatch(logIn(user.email, user.password));
     };
 
-    const refreshToken = async () => {
-        dispatch(refreshTokenData(user.refreshToken));
-    }
+    const refreshToken = async (token) => {
+        dispatch(refreshTokenData(token));
+    };
 
     const signOut = async () => {
         dispatch(logoutData(user.refreshToken));

@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {BrowserRouter as Router, Switch, Route, useLocation} from 'react-router-dom';
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import MainPage from "../main/MainPage";
 import {NotFound404} from "../../pages/NotFound404";
 import SignInPage from "../../pages/SignInPage";
@@ -8,7 +8,7 @@ import ResetPasswordPage from "../../pages/ResetPasswordPage";
 import ForgotPasswordPage from "../../pages/ForgotPasswordPage";
 import ProfilePage from "../../pages/ProfilePage";
 import {ProtectedRoute} from "../protected-route";
-import {ProvideAuth} from '../../services/auth';
+import {ProvideAuth, useAuth} from '../../services/auth';
 import IngredientDetailsPage from "../../pages/IngredientDetailsPage";
 import AppHeader from "../header/AppHeader";
 import {useDispatch, useSelector} from "react-redux";
@@ -21,7 +21,7 @@ export default function App() {
     const {
         modalOpen,
         currentIngredient,
-        allIngredientsData
+        allIngredientsData,
     } = useSelector(state => state.order);
 
     useEffect(

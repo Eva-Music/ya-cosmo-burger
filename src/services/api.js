@@ -141,12 +141,9 @@ export const refreshTokenRequest = async (token) => {
                 },
                 redirect: 'follow',
                 referrerPolicy: 'no-referrer',
-                body: JSON.stringify({"token": `{{${token}}}`})
+                body: JSON.stringify({"token": `${token}`})
         }).then(res => {
-                if (res.ok) {
-                        return res.json();
-                }
-                return Promise.reject(`Ошибка ${res.status}`);
+                return res.json();
         }).catch(err => {
                 Promise.reject(`Can't refresh token: ${err}`);
         })

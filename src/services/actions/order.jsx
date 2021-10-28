@@ -39,6 +39,7 @@ export const CLEAN_USER = 'CLEAN_USER';
 export const USER_ERROR = 'USER_ERROR';
 export const SET_USER = 'SET_USER';
 export const SET_USER_LOGIN = 'SET_USER_LOGIN';
+export const SET_USER_TOKEN = 'SET_USER_TOKEN';
 
 export function getListIngredients() {
     return function(dispatch) {
@@ -195,10 +196,12 @@ export const refreshTokenData = (token) => async (dispatch) => {
     refreshTokenRequest(token).then(data => {
             if (data.success) {
                 dispatch({
-                    type: SET_USER,
+                    type: SET_USER_TOKEN,
                     refreshToken: data.refreshToken,
-                    accessToken: data.accessToken
+                    accessToken: data.accessToken.split('Bearer ')[1],
                 })
+            } else {
+                window.localStorage.removeItem("refreshToken");
             }
             return data.success;
         }).catch(err => {

@@ -1,12 +1,12 @@
 import { useAuth } from '../services/auth';
-import { Redirect, Route, useLocation } from 'react-router-dom';
+import { Redirect, Route } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { useSelector} from "react-redux";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 
 export function ProtectedRoute({ children, ...rest }) {
-    let { signIn, getUser, ...auth } = useAuth();
-    const [isUserLoaded, setUserLoaded] = useState(false);
+    let { signIn, refreshToken, getUser, ...auth } = useAuth();
+    const [isUserAuth, setUserAuth] = useState(false);
 
     const notAllowedForAuthUser = ['/login', '/register', '/forgot-password', '/reset-password'];
     const notAllowedForNotAuthUser = ['/profile', '/reset-password'];
@@ -25,26 +25,36 @@ export function ProtectedRoute({ children, ...rest }) {
     }
 
     const init = async () => {
-        user.accessToken && await getUser();
-        if (user.email !== ''){
-            setUserLoaded(true);
-        }
+        const token = window.localStorage.getItem('refreshToken');
+        token && await refreshToken(token);
     };
+
+    const findUser = async () => {
+        user.accessToken && await getUser();
+    }
 
     useEffect(() => {
         init();
     }, []);
 
     useEffect(() => {
-        user.email !== '' && setUserLoaded(true);
-    }, [user]);
+        user.refreshToken && window.localStorage.setItem('refreshToken', user.refreshToken);
+    }, [user.refreshToken]);
+
+    useEffect(() => {
+        findUser();
+    }, [user.accessToken]);
+
+    useEffect(() => {
+        user.email ? setUserAuth(true) : setUserAuth(false);
+    }, [user.email])
 
     return (
         <Route
             {...rest}
             render={({ location }) =>
             {
-                if (isUserLoaded) {
+                if (isUserAuth) {
                     if (notAllowedForAuthUser.filter(p => p === rest.path).length === 0) {
                         return (children)
                     } else {
@@ -54,10 +64,10 @@ export function ProtectedRoute({ children, ...rest }) {
                     }
                 } else {
                     if (notAllowedForNotAuthUser.filter(p => rest.path.indexOf(p) !== -1).length === 0) {
-                        if (location.pathname === '/forgot-password'){
+                        // if (location.pathname === '/forgot-password'){
                             redirectTo(location.pathname, location);
-                        }
-                        return (children)
+                        // }
+                        // return (children)
                     } else {
                         if (location.state &&
                             location.state.from.pathname === '/forgot-password' &&

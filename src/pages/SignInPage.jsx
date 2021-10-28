@@ -1,14 +1,14 @@
 import styles from './login.module.css';
 import React, {useEffect, useState} from "react";
 import {Button, Input} from "@ya.praktikum/react-developer-burger-ui-components";
-import {Link, useHistory} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {SET_USER_LOGIN} from "../services/actions/order";
 import {useAuth} from "../services/auth";
 
 const SignInPage = () => {
 
-    let { signIn, ...auth } = useAuth();
+    let { signIn } = useAuth();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
