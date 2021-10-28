@@ -38,10 +38,6 @@ export function ProtectedRoute({ children, ...rest }) {
     }, []);
 
     useEffect(() => {
-        user.refreshToken && window.localStorage.setItem('refreshToken', user.refreshToken);
-    }, [user.refreshToken]);
-
-    useEffect(() => {
         findUser();
     }, [user.accessToken]);
 

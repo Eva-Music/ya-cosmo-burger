@@ -22,6 +22,7 @@ export default function App() {
         modalOpen,
         currentIngredient,
         allIngredientsData,
+        user
     } = useSelector(state => state.order);
 
     useEffect(
@@ -30,6 +31,10 @@ export default function App() {
         },
         []
     );
+
+    useEffect(() => {
+        user.refreshToken && window.localStorage.setItem('refreshToken', user.refreshToken);
+    }, [user.refreshToken]);
 
     return (
         <>
