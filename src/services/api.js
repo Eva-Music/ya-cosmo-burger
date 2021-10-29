@@ -160,7 +160,7 @@ export const logoutRequest = async (token) => {
                 },
                 redirect: 'follow',
                 referrerPolicy: 'no-referrer',
-                body: JSON.stringify({"token": `{{${token}}}`})
+                body: JSON.stringify({"token": `${token}`})
         }).then(res => {
                 if (res.ok) {
                         return res.json();

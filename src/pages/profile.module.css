@@ -6,7 +6,9 @@
 
 }
 
-
+.btn{
+    cursor: pointer;
+}
 
 .container{
     height: 500px;

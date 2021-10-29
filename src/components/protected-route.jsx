@@ -60,17 +60,11 @@ export function ProtectedRoute({ children, ...rest }) {
                     }
                 } else {
                     if (notAllowedForNotAuthUser.filter(p => rest.path.indexOf(p) !== -1).length === 0) {
-                        // if (location.pathname === '/forgot-password'){
-                            redirectTo(location.pathname, location);
-                        // }
-                        // return (children)
+                        return (children)
                     } else {
-                        if (location.state &&
-                            location.state.from.pathname === '/forgot-password' &&
-                            location.pathname === '/reset-password'){
-                            return (<ResetPasswordPage />);
-                        }
-                        return redirectTo('/login', location);
+                        return location.pathname === '/reset-password' ?
+                            <ResetPasswordPage /> :
+                            redirectTo('/login', location);
                     }
                 }
             }

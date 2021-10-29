@@ -25,12 +25,9 @@ export default function App() {
         user
     } = useSelector(state => state.order);
 
-    useEffect(
-        () => {
-            if (!allIngredientsData.length) dispatch(getListIngredients());
-        },
-        []
-    );
+    useEffect(() => {
+        if (!allIngredientsData.length) dispatch(getListIngredients());
+    }, []);
 
     useEffect(() => {
         user.refreshToken && window.localStorage.setItem('refreshToken', user.refreshToken);
@@ -43,9 +40,9 @@ export default function App() {
                 <Router>
                     <AppHeader/>
                     <Switch>
-                        <ProtectedRoute path="/" exact={true}>
+                        <Route path="/" exact={true}>
                             <MainPage/>
-                        </ProtectedRoute>
+                        </Route>
                         <ProtectedRoute path="/login" exact={true}>
                             <SignInPage/>
                         </ProtectedRoute>
@@ -61,9 +58,9 @@ export default function App() {
                         <ProtectedRoute path="/profile" exact={true}>
                             <ProfilePage/>
                         </ProtectedRoute>
-                        <ProtectedRoute path={`/ingredients/:id`} exact={true}>
+                        <Route path={`/ingredients/:id`} exact={true}>
                             {modalOpen && currentIngredient ? <MainPage /> : <IngredientDetailsPage/>}
-                        </ProtectedRoute>
+                        </Route>
                         <Route>
                             <NotFound404/>
                         </Route>

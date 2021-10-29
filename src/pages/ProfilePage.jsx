@@ -2,9 +2,12 @@ import React, {useState} from "react";
 import styles from './profile.module.css';
 import {Input} from "@ya.praktikum/react-developer-burger-ui-components";
 import {useDispatch, useSelector} from "react-redux";
-import {SET_USER} from "../services/actions/order";
+import {CLEAN_USER, SET_USER} from "../services/actions/order";
+import {useAuth} from "../services/auth";
 
 const ProfilePage = () => {
+
+    let { signOut, ...auth } = useAuth();
 
     const {
         user,
@@ -27,6 +30,11 @@ const ProfilePage = () => {
         });
     }
 
+    const logOut = async () => {
+        user.refreshToken && await signOut();
+        dispatch({type: CLEAN_USER});
+    }
+
     return (
         <div>
             <div className={styles.wrapper}>
@@ -34,15 +42,15 @@ const ProfilePage = () => {
                     <section style={{height: '250px'}} className={styles.main}>
 
                         <div className={styles.block}>
-                            <p className="text text_type_main-medium">
+                            <p className={`${styles.btn} text text_type_main-medium`}>
                                 Профиль
                             </p>
 
-                            <p className="text text_type_main-medium text_color_inactive">
+                            <p className={`${styles.btn} text text_type_main-medium text_color_inactive`}>
                                 История заказов
                             </p>
 
-                            <p className="text text_type_main-medium text_color_inactive">
+                            <p onClick={logOut} className={`${styles.btn} text text_type_main-medium text_color_inactive`}>
                                 Выход
                             </p>
                         </div>
