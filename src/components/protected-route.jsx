@@ -1,18 +1,13 @@
-import { useAuth } from '../services/auth';
-import { Redirect, Route } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
-import { useSelector} from "react-redux";
-import ResetPasswordPage from "../pages/ResetPasswordPage";
+import {useAuth} from '../services/auth';
+import {Redirect, Route} from 'react-router-dom';
+import React, {useEffect} from 'react';
+import {useSelector} from "react-redux";
 
 export function ProtectedRoute({ children, ...rest }) {
-    let { signIn, refreshToken, getUser, ...auth } = useAuth();
-    const [isUserAuth, setUserAuth] = useState(false);
-
-    const notAllowedForAuthUser = ['/login', '/register', '/forgot-password', '/reset-password'];
-    const notAllowedForNotAuthUser = ['/profile', '/reset-password'];
+    let { refreshUser, ...auth } = useAuth();
 
     const {
-        user,
+        isUserAuth
     } = useSelector(state => state.order);
 
     const redirectTo = (to, location) => {
@@ -24,26 +19,17 @@ export function ProtectedRoute({ children, ...rest }) {
         />)
     }
 
-    const init = async () => {
-        const token = window.localStorage.getItem('refreshToken');
-        token && await refreshToken(token);
-    };
-
-    const findUser = async () => {
-        user.accessToken && await getUser();
-    }
+    useEffect(() => {
+            if (!isUserAuth) {
+                const token = window.localStorage.getItem('refreshToken');
+                token && refreshUser(token);
+            }
+        }, []
+    );
 
     useEffect(() => {
-        init();
-    }, []);
-
-    useEffect(() => {
-        findUser();
-    }, [user.accessToken]);
-
-    useEffect(() => {
-        user.email ? setUserAuth(true) : setUserAuth(false);
-    }, [user.email])
+        console.log(isUserAuth);
+    }, [isUserAuth]);
 
     return (
         <Route
@@ -51,21 +37,11 @@ export function ProtectedRoute({ children, ...rest }) {
             render={({ location }) =>
             {
                 if (isUserAuth) {
-                    if (notAllowedForAuthUser.filter(p => p === rest.path).length === 0) {
-                        return (children)
-                    } else {
-                        return location.state && location.state.from.pathname ?
-                            redirectTo(location.state.from.pathname, location) :
-                            redirectTo('/', location);
-                    }
+                    return location.state && location.state.from.pathname ?
+                        redirectTo(location.state.from.pathname, location) :
+                        children;
                 } else {
-                    if (notAllowedForNotAuthUser.filter(p => rest.path.indexOf(p) !== -1).length === 0) {
-                        return (children)
-                    } else {
-                        return location.pathname === '/reset-password' ?
-                            <ResetPasswordPage /> :
-                            redirectTo('/login', location);
-                    }
+                    return redirectTo('/login', location);
                 }
             }
             }

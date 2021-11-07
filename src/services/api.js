@@ -11,14 +11,13 @@ const refresh_token = 'https://norma.nomoreparties.space/api/auth/token'; // - �
 const get_update_user = 'https://norma.nomoreparties.space/api/auth/user'; //- эндпоинт получения данных о пользователе.
 
 export const getIngredientsRequest = async () => {
-        return await fetch(url).then(res => {
-                if (res.ok) {
-                        return res.json();
-                }
-                return Promise.reject(`Ошибка ${res.status}`);
-        }).catch(err => {
-                Promise.reject(`Can't get ingredients: ${err}`);
-        })
+        return await fetch(url)
+            .then(res => res.ok ?
+                res.json() :
+                Promise.reject(`Ошибка ${res.status}`))
+            .catch(err => {
+                    Promise.reject(`Can't get ingredients: ${err}`);
+            })
 };
 
 export const getOrderNumberRequest = async (ingredients) => {
@@ -26,14 +25,13 @@ export const getOrderNumberRequest = async (ingredients) => {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({"ingredients": ingredients})
-        }).then(res => {
-                if (res.ok) {
-                        return res.json();
-                }
-                return Promise.reject(`Ошибка ${res.status}`);
-        }).catch(err => {
-                Promise.reject(`Can't get order number: ${err}`);
         })
+            .then(res => res.ok ?
+                res.json() :
+                Promise.reject(`Ошибка ${res.status}`))
+            .catch(err => {
+                    Promise.reject(`Can't get order number: ${err}`);
+            })
 };
 
 export const postEmailToReset = async (email) => {
@@ -41,14 +39,13 @@ export const postEmailToReset = async (email) => {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({"email": email})
-        }).then(res => {
-                if (res.ok) {
-                        return res.json();
-                }
-                return Promise.reject(`Ошибка ${res.status}`);
-        }).catch(err => {
-                Promise.reject(`Can't post email to reset: ${err}`);
         })
+            .then(res => res.ok ?
+                res.json() :
+                Promise.reject(`Ошибка ${res.status}`))
+            .catch(err => {
+                    Promise.reject(`Can't post email to reset: ${err}`);
+            })
 };
 
 export const postPasswordToReset = async (password, code) => {
@@ -56,16 +53,14 @@ export const postPasswordToReset = async (password, code) => {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({"password": password, "token": code})
-        }).then(res => {
-                if (res.ok) {
-                        return res.json();
-                }
-                return Promise.reject(`Ошибка ${res.status}`);
-        }).catch(err => {
-                Promise.reject(`Can't post password to reset: ${err}`);
         })
+            .then(res => res.ok ?
+                res.json() :
+                Promise.reject(`Ошибка ${res.status}`))
+            .catch(err => {
+                    Promise.reject(`Can't post password to reset: ${err}`);
+            })
 };
-
 
 export const postRegister = async (email, password, name) => {
         return await fetch(register, {
@@ -77,16 +72,14 @@ export const postRegister = async (email, password, name) => {
                 referrerPolicy: 'no-referrer',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({"email": email, "password": password, "name": name})
-        }).then(res => {
-                if (res.ok) {
-                        return res.json();
-                }
-                return Promise.reject(`Ошибка ${res.status}`);
-        }).catch(err => {
-                Promise.reject(`Can't register: ${err}`);
         })
+            .then(res => res.ok ?
+                res.json() :
+                Promise.reject(`Ошибка ${res.status}`))
+            .catch(err => {
+                    Promise.reject(`Can't register: ${err}`);
+            })
 };
-
 
 export const loginRequest = async (email, password) => {
         return await fetch(login, {
@@ -99,36 +92,33 @@ export const loginRequest = async (email, password) => {
                 },
                 referrerPolicy: 'no-referrer',
                 body: JSON.stringify({"email": email, "password": password})
-        }).then(res => {
-                if (res.ok) {
-                        return res.json();
-                }
-                return Promise.reject(`Ошибка ${res.status}`);
-        }).catch(err => {
-                Promise.reject(`Can't login: ${err}`);
         })
+            .then(res => res.ok ?
+                res.json() :
+                Promise.reject(`Ошибка ${res.status}`))
+            .catch(err => {
+                    Promise.reject(`Can't login: ${err}`);
+            })
 };
 
-export const getUserRequest = async (token) =>
-    await fetch(get_update_user, {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer ' + token
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer'
-    }).then(res => {
-            if (res.ok) {
-                    return res.json();
-            }
-            return Promise.reject(`Ошибка ${res.status}`);
-    }).catch(err => {
-            Promise.reject(`Can't get user request: ${err}`);
-    })
+export const getUserRequest = async (token) => {
+        return await fetch(get_update_user, {
+                method: 'GET',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: 'Bearer ' + token
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer'
+        })
+            .then(res => res.json())
+            .catch(err => {
+                    Promise.reject(`Can't get user request: ${err}`);
+            })
+}
 
 export const refreshTokenRequest = async (token) => {
         return await fetch(refresh_token, {
@@ -142,11 +132,11 @@ export const refreshTokenRequest = async (token) => {
                 redirect: 'follow',
                 referrerPolicy: 'no-referrer',
                 body: JSON.stringify({"token": `${token}`})
-        }).then(res => {
-                return res.json();
-        }).catch(err => {
-                Promise.reject(`Can't refresh token: ${err}`);
         })
+            .then(res => res.json())
+            .catch(err => {
+                    Promise.reject(`Can't refresh token: ${err}`);
+            })
 };
 
 export const logoutRequest = async (token) => {
@@ -161,12 +151,11 @@ export const logoutRequest = async (token) => {
                 redirect: 'follow',
                 referrerPolicy: 'no-referrer',
                 body: JSON.stringify({"token": `${token}`})
-        }).then(res => {
-                if (res.ok) {
-                        return res.json();
-                }
-                return Promise.reject(`Ошибка ${res.status}`);
-        }).catch(err => {
-                Promise.reject(`Can't logout: ${err}`);
         })
+            .then(res => res.ok ?
+                res.json() :
+                Promise.reject(`Ошибка ${res.status}`))
+            .catch(err => {
+                    Promise.reject(`Can't logout: ${err}`);
+            })
 };

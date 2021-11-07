@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import MainPage from "../main/MainPage";
 import {NotFound404} from "../../pages/NotFound404";
 import SignInPage from "../../pages/SignInPage";
@@ -8,7 +8,7 @@ import ResetPasswordPage from "../../pages/ResetPasswordPage";
 import ForgotPasswordPage from "../../pages/ForgotPasswordPage";
 import ProfilePage from "../../pages/ProfilePage";
 import {ProtectedRoute} from "../protected-route";
-import {ProvideAuth, useAuth} from '../../services/auth';
+import {ProvideAuth} from '../../services/auth';
 import IngredientDetailsPage from "../../pages/IngredientDetailsPage";
 import AppHeader from "../header/AppHeader";
 import {useDispatch, useSelector} from "react-redux";
@@ -43,18 +43,18 @@ export default function App() {
                         <Route path="/" exact={true}>
                             <MainPage/>
                         </Route>
-                        <ProtectedRoute path="/login" exact={true}>
+                        <Route path="/login" exact={true}>
                             <SignInPage/>
-                        </ProtectedRoute>
-                        <ProtectedRoute path="/register" exact={true}>
+                        </Route>
+                        <Route path="/register" exact={true}>
                             <RegistryPage/>
-                        </ProtectedRoute>
-                        <ProtectedRoute path="/forgot-password" exact={true}>
+                        </Route>
+                        <Route path="/forgot-password" exact={true}>
                             <ForgotPasswordPage/>
-                        </ProtectedRoute>
-                        <ProtectedRoute path="/reset-password" exact={true}>
+                        </Route>
+                        <Route path="/reset-password" exact={true}>
                             <ResetPasswordPage/>
-                        </ProtectedRoute>
+                        </Route>
                         <ProtectedRoute path="/profile" exact={true}>
                             <ProfilePage/>
                         </ProtectedRoute>

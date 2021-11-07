@@ -1,7 +1,14 @@
-import { useContext, createContext } from 'react';
-import React from 'react';
-import {useDispatch, useSelector} from "react-redux";
-import {getUserData, logIn, logoutData, refreshTokenData, userRegister} from "./actions/order";
+import React, {createContext, useContext} from 'react';
+import {useDispatch} from "react-redux";
+import {
+    forgotPassword,
+    getUserData,
+    logIn,
+    logoutData,
+    refreshTokenData,
+    resetPassword,
+    userRegister
+} from "./actions/order";
 
 const AuthContext = createContext(undefined);
 
@@ -19,35 +26,64 @@ export function useProvideAuth() {
 
     const dispatch = useDispatch();
 
-    const {
-        user,
-    } = useSelector(state => state.order);
-
-   const register = async () => {
-       dispatch(userRegister(user.email, user.password, user.name));
-    };
-
-    const getUser = async () => {
-        dispatch(getUserData(user.accessToken))
-    };
-
-    const signIn = async () => {
-        dispatch(logIn(user.email, user.password));
+    const register = async (email, name, password) => {
+        const success = await dispatch(userRegister(email, password, name));
+        console.log(success);
+        return success
     };
 
     const refreshToken = async (token) => {
-        dispatch(refreshTokenData(token));
+        const accessToken = await dispatch(refreshTokenData(token));
+        console.log(accessToken);
+        return accessToken;
     };
 
-    const signOut = async () => {
-        dispatch(logoutData(user.refreshToken));
+    const refreshUser = async (token) => {
+        const accessToken = await dispatch(refreshTokenData(token));
+        console.log(accessToken);
+        const email = await dispatch(getUserData(accessToken));
+        console.log(email);
+        return email;
     };
+
+    const getUser = async (accessToken) => {
+        const email = await dispatch(getUserData(accessToken));
+        console.log(email);
+        return email;
+    };
+
+    const signIn = async (email, password) => {
+        const success = await dispatch(logIn(email, password));
+        console.log(success);
+        return success
+    };
+
+    const signOut = async (refreshToken) => {
+        const success = await dispatch(logoutData(refreshToken));
+        console.log(success);
+        return success
+    };
+
+    const resetUserPassword = async (password, code) => {
+        const success = await dispatch(resetPassword(password, code));
+        console.log(success);
+        return success
+    }
+
+    const forgotUserPassword = async (email) => {
+        const success = await dispatch(forgotPassword(email));
+        console.log(success);
+        return success
+    }
 
     return {
+        refreshUser,
         register,
         getUser,
         signIn,
         refreshToken,
-        signOut
+        signOut,
+        resetUserPassword,
+        forgotUserPassword
     };
 }

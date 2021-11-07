@@ -22,7 +22,9 @@ import {
     RESET_PASSWORD_FAILED,
     RESET_EMAIL_SUCCESS,
     SET_MODAL_STATUS, SET_USER_TOKEN,
-    RESET_EMAIL_FAILED, RESET_REQUEST, SET_USER, SET_USER_LOGIN, SET_USER_REGISTRY, CLEAN_USER, USER_ERROR
+    AUTH_USER,
+    RESET_EMAIL_FAILED, RESET_REQUEST, SET_USER, SET_USER_LOGIN, SET_USER_REGISTRY,
+    CLEAN_USER, USER_ERROR
 } from '../actions/order';
 
 const initialState = {
@@ -64,7 +66,8 @@ const initialState = {
                         // для выхода из системы и для получения нового accessToken,
                         // если последний перестал подходить и просрочился.
     },
-    userError: false
+    userError: false,
+    isUserAuth: false
 };
 
 export const orderReducer = (state = initialState, action) => {
@@ -75,8 +78,17 @@ export const orderReducer = (state = initialState, action) => {
                 user: {
                     ...state.user,
                     email: action.email,
-                    password: action.password
+                    password: action.password,
+                    accessToken: action.accessToken,
+                    refreshToken: action.refreshToken,
+                    name: action.name
                 }
+            }
+        }
+        case AUTH_USER: {
+            return {
+                ...state,
+                isUserAuth: !state.isUserAuth
             }
         }
 

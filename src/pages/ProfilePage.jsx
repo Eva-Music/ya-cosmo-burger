@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import styles from './profile.module.css';
 import {Input} from "@ya.praktikum/react-developer-burger-ui-components";
 import {useDispatch, useSelector} from "react-redux";
-import {CLEAN_USER, SET_USER} from "../services/actions/order";
+import {SET_USER} from "../services/actions/order";
 import {useAuth} from "../services/auth";
 
 const ProfilePage = () => {
@@ -30,9 +30,8 @@ const ProfilePage = () => {
         });
     }
 
-    const logOut = async () => {
-        user.refreshToken && await signOut();
-        dispatch({type: CLEAN_USER});
+    const logOut = () => {
+        user.refreshToken && signOut(user.refreshToken);
     }
 
     return (
