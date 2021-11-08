@@ -1,32 +1,26 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from './final-price.module.css'
 import {useDispatch, useSelector} from "react-redux";
 import {getOrderNumber, ORDER_PRICE} from "../../services/actions/order";
 import {useAuth} from "../../services/auth";
-import {Redirect, useHistory, useLocation} from "react-router-dom";
+import {Redirect, useLocation} from "react-router-dom";
 
 const FinalPrice = () => {
 
-    let { getUser, ...auth } = useAuth();
+    let { refreshUser, ...auth } = useAuth();
     const location = useLocation();
-    const history = useHistory();
+    const [isClicked, setClicked] = useState(false);
 
     const {
         currentOrderIngredients,
         orderPrice,
         bun,
-        user
+        user,
+        isUserAuth
     } = useSelector(state => state.order);
 
     const dispatch = useDispatch();
-
-    const init = async () => {
-        user.accessToken && await getUser();
-        if (user.email === ''){
-            history.replace('/login');
-        }
-    };
 
     useEffect(() => {
         if (currentOrderIngredients.length !== 0) {
@@ -37,8 +31,26 @@ const FinalPrice = () => {
     }, [currentOrderIngredients]);
 
     const openOrderModal = () => {
-        init();
+        !isUserAuth && setClicked(true);
         return bun && dispatch(getOrderNumber(currentOrderIngredients));
+    }
+
+    useEffect(()=> {
+        setClicked(false);
+        if (!isUserAuth) {
+            const token = window.localStorage.getItem('refreshToken');
+            token && refreshUser(token);
+        }
+    }, [])
+
+    if (isClicked){
+        if (!user.email){
+            return (<Redirect to={{
+                    pathname: '/login',
+                    state: {from: location}
+                }}/>
+            );
+        }
     }
 
     return (

@@ -1,7 +1,7 @@
 import styles from './login.module.css';
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Input} from "@ya.praktikum/react-developer-burger-ui-components";
-import {Link, Redirect} from "react-router-dom";
+import {Link, Redirect, useLocation} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {useAuth} from "../services/auth";
 
@@ -11,6 +11,9 @@ const ResetPasswordPage = () => {
 
     const [password, setPassword] = useState('');
     const [code, setCode] = useState('');
+    const [isNotAllowed, setIsNotAllowed] = useState(false);
+
+    const location = useLocation();
 
     const {
         resetPasswordSuccess
@@ -21,7 +24,15 @@ const ResetPasswordPage = () => {
         e.preventDefault();
     }
 
-    if (resetPasswordSuccess) {
+    useEffect(() => {
+        setIsNotAllowed(false);
+        if (!location.state || !location.state.from.pathname &&
+            location.state.from.pathname !== '/forgot-password'){
+            setIsNotAllowed(true);
+        }
+    }, []);
+
+    if (resetPasswordSuccess || isNotAllowed) {
         return (<Redirect to={{
                 pathname: '/login'
             }}/>
