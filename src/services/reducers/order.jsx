@@ -17,7 +17,14 @@ import {
     ORDER_PRICE,
     DELETE_ORDER_NUMBER,
 
-    ADD_DRAG_INGREDIENT
+    ADD_DRAG_INGREDIENT,
+    RESET_PASSWORD_SUCCESS,
+    RESET_PASSWORD_FAILED,
+    RESET_EMAIL_SUCCESS,
+    SET_MODAL_STATUS, SET_USER_TOKEN,
+    AUTH_USER,
+    RESET_EMAIL_FAILED, RESET_REQUEST, SET_USER, SET_USER_LOGIN, SET_USER_REGISTRY,
+    CLEAN_USER, USER_ERROR
 } from '../actions/order';
 
 const initialState = {
@@ -40,12 +47,99 @@ const initialState = {
     currentOrderNumber: 0,
     orderPriceFailedMsg: '',
     ingredientCounter: 0,
+
+    resetLoading: true,
+    resetPasswordSuccess: undefined,
+    resetPasswordFailed: undefined,
+
+    resetEmailSuccess: undefined,
+    resetEmailFailed: undefined,
+
+    user: {
+        name: '',
+        email: '',
+        password: '',
+        accessToken: '', // используется в запросах к эндпоинту auth/user для получения и обновления
+                        // данных пользователя. Передавайте accessToken в заголовке authorization.
+                        // Срок жизни токена — 20 минут.
+        refreshToken: '' //сохраняйте в localStorage или в куки. Токен используется
+                        // для выхода из системы и для получения нового accessToken,
+                        // если последний перестал подходить и просрочился.
+    },
+    userError: false,
+    isUserAuth: false
 };
 
 export const orderReducer = (state = initialState, action) => {
     switch (action.type) {
-        case ADD_CURRENT_ORDER_INGREDIENTS: {
+        case SET_USER_LOGIN: {
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    email: action.email,
+                    password: action.password,
+                    accessToken: action.accessToken,
+                    refreshToken: action.refreshToken,
+                    name: action.name
+                }
+            }
+        }
+        case AUTH_USER: {
+            return {
+                ...state,
+                isUserAuth: !state.isUserAuth
+            }
+        }
 
+        case SET_USER_REGISTRY: {
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    accessToken: action.accessToken,
+                    refreshToken: action.refreshToken,
+                    name: action.name
+                }
+            }
+        }
+
+        case SET_USER_TOKEN: {
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    accessToken: action.accessToken,
+                    refreshToken: action.refreshToken,
+                }
+            }
+        }
+
+        case SET_USER: {
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    name: action.name,
+                    email: action.email,
+                    password: action.password
+                }
+            }
+        }
+        case CLEAN_USER: {
+            return {
+                ...state,
+                user: {}
+            }
+        }
+        case USER_ERROR: {
+            return {
+                ...state,
+                userError: action.value
+            }
+        }
+
+        case ADD_CURRENT_ORDER_INGREDIENTS: {
             return {
                 ...state,
                 currentDragIngredient: null,
@@ -100,9 +194,14 @@ export const orderReducer = (state = initialState, action) => {
         case SET_CURRENT_INGREDIENT: {
             return {
                 ...state,
-                modalOpen: true,
                 modalContent: 'ingredients',
                 currentIngredient: action.data
+            }
+        }
+        case SET_MODAL_STATUS: {
+            return {
+                ...state,
+                modalOpen: action.status
             }
         }
         case DELETE_CURRENT_INGREDIENT: {
@@ -175,6 +274,47 @@ export const orderReducer = (state = initialState, action) => {
                 orderPrice: finalPrice
             }
         }
+
+        case RESET_REQUEST: {
+            return {
+                ...state,
+                resetLoading: true,
+                resetPasswordSuccess: undefined,
+                resetPasswordFailed: undefined,
+                resetEmailSuccess: undefined,
+                resetEmailFailed: undefined
+            }
+        }
+        case RESET_PASSWORD_SUCCESS: {
+            return {
+                ...state,
+                resetPasswordSuccess: action.value,
+                resetLoading: false
+            }
+        }
+        case RESET_PASSWORD_FAILED: {
+            return {
+                ...state,
+                resetPasswordFailed: true,
+                resetLoading: false
+            }
+        }
+
+        case RESET_EMAIL_SUCCESS: {
+            return {
+                ...state,
+                resetEmailSuccess: action.value,
+                resetLoading: false
+            }
+        }
+        case RESET_EMAIL_FAILED: {
+            return {
+                ...state,
+                resetEmailFailed: true,
+                resetLoading: false
+            }
+        }
+
         default: {
             return state;
         }

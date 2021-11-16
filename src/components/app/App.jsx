@@ -1,75 +1,72 @@
 import React, {useEffect} from 'react';
-import style from './app.module.css';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import MainPage from "../main/MainPage";
+import {NotFound404} from "../../pages/NotFound404";
+import SignInPage from "../../pages/SignInPage";
+import RegistryPage from "../../pages/RegistryPage";
+import ResetPasswordPage from "../../pages/ResetPasswordPage";
+import ForgotPasswordPage from "../../pages/ForgotPasswordPage";
+import ProfilePage from "../../pages/ProfilePage";
+import {ProtectedRoute} from "../protected-route";
+import {ProvideAuth} from '../../services/auth';
+import IngredientDetailsPage from "../../pages/IngredientDetailsPage";
 import AppHeader from "../header/AppHeader";
-import BurgerIngredients from "../ingredients/BurgerIngredients";
-import BurgerConstructor from "../constructor/BurgerConstructor";
-import Modal from "../modal/Modal";
-import IngredientDetails from "../details/IngredientDetails";
-import OrderDetails from "../details/OrderDetails";
 import {useDispatch, useSelector} from "react-redux";
-import {
-    ADD_CURRENT_ORDER_INGREDIENTS,
-    getListIngredients,
-} from "../../services/actions/order";
-import {DndProvider} from "react-dnd";
-import {HTML5Backend} from "react-dnd-html5-backend";
+import {getListIngredients} from "../../services/actions/order";
 
-function App() {
+export default function App() {
+
     const dispatch = useDispatch();
 
     const {
-        allIngredientsData,
         modalOpen,
-        modalContent,
-        currentDragIngredient,
+        currentIngredient,
+        allIngredientsData,
+        user
     } = useSelector(state => state.order);
 
-    useEffect(
-        () => {
-            if (!allIngredientsData.length) dispatch(getListIngredients());
-        },
-        [dispatch]
-    );
+    useEffect(() => {
+        if (!allIngredientsData.length) dispatch(getListIngredients());
+    }, []);
 
-    const handleDrop = () => {
-        const data = currentDragIngredient;
-        dispatch({
-            type: ADD_CURRENT_ORDER_INGREDIENTS,
-            data
-        });
-    };
-
-    const modal =
-        <Modal isVisible={modalOpen}>
-            {modalContent === 'ingredients' && <IngredientDetails/>}
-            {modalContent === 'order' && <OrderDetails/>}
-        </Modal>
+    useEffect(() => {
+        user.refreshToken && window.localStorage.setItem('refreshToken', user.refreshToken);
+    }, [user.refreshToken]);
 
     return (
-        <div className={style.App}>
-            <AppHeader />
-            {modalOpen && modal}
+        <>
 
-            <section className={style.mainSection}>
-                <div className={style.App}>
-                    <p className={`text_type_main-large m-10`}>
-                        Соберите бургер
-                    </p>
-                    <DndProvider backend={HTML5Backend}>
-                        <section className={style.mainContent}>
-                            <div className={style.App}>
-                                <BurgerIngredients />
-                            </div>
-                            <div style={{alignSelf: "flex-start"}}>
-                                <BurgerConstructor onDropHandler={handleDrop}/>
-                            </div>
-                        </section>
-                    </DndProvider>
-
-                </div>
-            </section>
-        </div>
+            <ProvideAuth>
+                <Router>
+                    <AppHeader/>
+                    <Switch>
+                        <Route path="/" exact={true}>
+                            <MainPage/>
+                        </Route>
+                        <Route path="/login" exact={true}>
+                            <SignInPage/>
+                        </Route>
+                        <Route path="/register" exact={true}>
+                            <RegistryPage/>
+                        </Route>
+                        <Route path="/forgot-password" exact={true}>
+                            <ForgotPasswordPage/>
+                        </Route>
+                        <Route path="/reset-password" exact={true}>
+                            <ResetPasswordPage/>
+                        </Route>
+                        <ProtectedRoute path="/profile" exact={true}>
+                            <ProfilePage/>
+                        </ProtectedRoute>
+                        <Route path={`/ingredients/:id`} exact={true}>
+                            {modalOpen && currentIngredient ? <MainPage /> : <IngredientDetailsPage/>}
+                        </Route>
+                        <Route>
+                            <NotFound404/>
+                        </Route>
+                    </Switch>
+                </Router>
+            </ProvideAuth>
+        </>
     );
 }
-
-export default App;

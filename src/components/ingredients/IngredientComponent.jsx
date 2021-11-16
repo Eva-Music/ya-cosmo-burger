@@ -5,6 +5,7 @@ import IngredientCard from "../card/IngredientCard";
 import spinner from "../../images/spinner-197px.svg";
 import {useSelector} from "react-redux";
 import PropTypes from "prop-types";
+import {buseLocation } from "react-router-dom";
 
 const IngredientComponent = ({name, type}) => {
 
@@ -18,7 +19,8 @@ const IngredientComponent = ({name, type}) => {
             <div className={styles.cards}>
                 {allIngredientsData ? (allIngredientsData.filter(d => d.type === type)
                         .map(d =>
-                            <IngredientCard key={d._id} data={d}/>))
+                                <IngredientCard key={d._id} data={d}/>
+                        ))
                     : <img src={spinner} alt="load"/>}
             </div>
         </div>

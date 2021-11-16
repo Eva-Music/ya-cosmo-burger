@@ -5,27 +5,31 @@ import {createPortal} from "react-dom";
 import {CloseIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import {DELETE_CURRENT_INGREDIENT, DELETE_ORDER_NUMBER} from "../../services/actions/order";
 import {useDispatch, useSelector} from "react-redux";
+import {Link, Redirect} from "react-router-dom";
+import {useHistory} from "react-router";
 
-const Modal = ({children}) => {
+const Modal = ({children, onClose}) => {
     const modalRoot = document.getElementById("react-modals");
 
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
+    // const history = useHistory();
 
-    const {
-        modalContent
-    } = useSelector(state => state.order)
-
-    const onClose = () => {
-        if (modalContent === 'ingredient') {
-            dispatch({
-                type: DELETE_CURRENT_INGREDIENT,
-            });
-        } else {
-            dispatch({
-                type: DELETE_ORDER_NUMBER,
-            });
-        }
-    }
+    // const {
+    //     modalContent
+    // } = useSelector(state => state.order)
+    //
+    // const onClose = () => {
+    //     if (modalContent === 'ingredient') {
+    //         dispatch({
+    //             type: DELETE_CURRENT_INGREDIENT,
+    //         });
+    //     } else {
+    //         dispatch({
+    //             type: DELETE_ORDER_NUMBER,
+    //         });
+    //     }
+    //     history.push('/');
+    // }
 
     useEffect(() => {
         document.addEventListener("keydown", onClose, false);

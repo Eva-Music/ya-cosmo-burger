@@ -3,17 +3,21 @@ import PropTypes from "prop-types";
 import styles from './ingredient-card.module.css';
 import {Counter, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import {useDispatch, useSelector} from "react-redux";
-import { ADD_DRAG_INGREDIENT, SET_CURRENT_INGREDIENT} from "../../services/actions/order";
+import {ADD_DRAG_INGREDIENT, SET_CURRENT_INGREDIENT, SET_MODAL_STATUS} from "../../services/actions/order";
 import {useDrag} from "react-dnd";
+import {Link} from "react-router-dom";
+import {useHistory} from "react-router";
 
 const IngredientCard = ({data}) => {
     const {_id} = data;
 
+    const history = useHistory();
     const dispatch = useDispatch();
 
     const {
         ingredientsCounter,
-        currentOrderIngredients
+        currentOrderIngredients,
+        currentIngredient
     } = useSelector(state => state.order);
 
     const handleIngredientContent = (data) => {
@@ -21,6 +25,12 @@ const IngredientCard = ({data}) => {
             type: SET_CURRENT_INGREDIENT,
             data
         });
+        dispatch( {
+            type: SET_MODAL_STATUS,
+            status: true
+            }
+        )
+        console.log(currentIngredient)
     }
 
     const [{isDrag, opacity}, dragRef] = useDrag({
@@ -48,25 +58,30 @@ const IngredientCard = ({data}) => {
     }, [currentOrderIngredients])
 
     return (
-        <div className={styles.card} style={{opacity: opacity}}
-             onClick={() => {handleIngredientContent(data)}}>
+        <Link
+            to={{ pathname: `/ingredients/${_id}`, state: history.location.state }}
+            className={styles.link}
+        >
+            <div className={styles.card} style={{opacity: opacity}}
+                 onClick={() => {handleIngredientContent(data)}}>
 
-            <section ref={dragRef} className={`${styles.mainCard} p-4`}>
-                <img src={data.image} alt='ingredient'/>
-                <div className={styles.price}>
-                    <span className='text text_type_digits-default m-2'>{data.price}</span>
-                    <CurrencyIcon type="primary"/>
-                </div>
-                <span className={'text text_type_main-small'}>{data.name}</span>
-            </section>
+                <section ref={dragRef} className={`${styles.mainCard} p-4`}>
+                    <img src={data.image} alt='ingredient'/>
+                    <div className={styles.price}>
+                        <span className='text text_type_digits-default m-2'>{data.price}</span>
+                        <CurrencyIcon type="primary"/>
+                    </div>
+                    <span className={'text text_type_main-small'}>{data.name}</span>
+                </section>
 
-            <section className={styles.mark}>
-                {count !== 0 && <Counter
-                    count={count} size="default"/>
-                }
-            </section>
+                <section className={styles.mark}>
+                    {count !== 0 && <Counter
+                        count={count} size="default"/>
+                    }
+                </section>
 
-        </div>
+            </div>
+        </Link>
     )
 }
 
