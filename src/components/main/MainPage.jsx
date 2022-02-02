@@ -33,7 +33,7 @@ const MainPage = () => {
         });
     };
 
-    const onCLose = () => {
+    const onClose = () => {
         dispatch({
             type: DELETE_CURRENT_INGREDIENT,
         });
@@ -45,7 +45,7 @@ const MainPage = () => {
     }
 
     const modal =
-         <Modal isVisible={modalOpen} onClose={onCLose}>
+         <Modal isVisible={modalOpen} onClose={onClose}>
             {modalContent === 'ingredients' && <IngredientDetails/>}
 
             {modalContent === 'order' && <OrderDetails/>}
