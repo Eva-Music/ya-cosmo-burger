@@ -1,15 +1,15 @@
 export type TUser = {
-    readonly name: string;
-    readonly password: string;
-    readonly email: string;
-    readonly accessToken: string;
-    readonly refreshToken: string;
+    name: string;
+    password: string;
+    email: string;
+    accessToken: string;
+    refreshToken: string;
 };
 
 export type TIngredientsCounter = {
-    readonly id: number;
+    id: string;
     count: number;
-    readonly isBun: boolean;
+    isBun: boolean;
 };
 
 export type TIngredientsData = {
@@ -25,8 +25,3 @@ export type TIngredientsData = {
     readonly image_mobile: string;
     readonly image_large: string;
 }
-
-export type TIngredientsResponse = {
-    readonly success: boolean;
-    readonly data: Array<TIngredientsData>;
-};

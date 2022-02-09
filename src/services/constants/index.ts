@@ -33,3 +33,6 @@ export const SET_USER = 'SET_USER';
 export const SET_USER_LOGIN = 'SET_USER_LOGIN';
 export const SET_USER_TOKEN = 'SET_USER_TOKEN';
 export const AUTH_USER = 'AUTH_USER';
+export const USER_REQUEST = 'USER_REQUEST';
+export const TOKEN_REQUEST = 'TOKEN_REQUEST';
+export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';

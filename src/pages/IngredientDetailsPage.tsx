@@ -1,33 +1,29 @@
-import AppHeader from "../components/header/AppHeader";
 import React, {useEffect} from "react";
 import IngredientDetails from "../components/details/IngredientDetails";
 import styles from './ingredients.module.css';
-import {Link, useLocation} from "react-router-dom";
-import Modal from "../components/modal/Modal";
-import {useDispatch, useSelector} from "react-redux";
-import {getListIngredients, SET_CURRENT_INGREDIENT} from "../services/actions/order";
+import {useLocation} from "react-router-dom";
+import {useDispatch, useSelector} from "../services/hooks";
+import {SET_CURRENT_INGREDIENT} from "../services/constants";
 
 const IngredientDetailsPage = () => {
 
     let location = useLocation();
     const dispatch = useDispatch();
 
-    const {
-        currentIngredient,
-        allIngredientsData
-    } = useSelector(state => state.order);
+    const store = useSelector(state => state);
 
+    const {order, ingredients} = store;
 
     useEffect(() => {
-        if(!currentIngredient){
+        if(!order.currentIngredient){
             const current = location.pathname.split("/")[2];
-            const data = allIngredientsData.filter(x => x._id === current)[0];
+            const data = ingredients.allIngredientsData.filter(x => x._id === current)[0];
             dispatch({
                 type: SET_CURRENT_INGREDIENT,
                 data
             });
         }
-    },[allIngredientsData])
+    },[ingredients.allIngredientsData])
 
     return (
         <div>

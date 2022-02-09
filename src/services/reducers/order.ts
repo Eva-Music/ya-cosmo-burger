@@ -76,7 +76,6 @@ export const orderReducer = (state = orderInitialState, action: any): TOrderStat
             }
         }
 
-
         case CHANGE_CURRENT_ORDER_INGREDIENTS: {
             const newIngredients = [...state.currentOrderIngredients];
             const [ dragIndex, hoverIndex ] = [action.dragIndex, action.hoverIndex];
@@ -132,7 +131,7 @@ export const orderReducer = (state = orderInitialState, action: any): TOrderStat
                 ...state,
                 modalOpen: true,
                 modalContent: 'order',
-                currentOrderNumber: action.value.order.number,
+                currentOrderNumber: action.value,
             }
         }
         case GET_ORDER_NUMBER_FAILED: {

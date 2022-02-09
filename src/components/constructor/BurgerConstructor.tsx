@@ -1,26 +1,24 @@
 import {ConstructorElement} from "@ya.praktikum/react-developer-burger-ui-components";
-import React, {useCallback} from "react";
+import React, {FC, useCallback} from "react";
 import styles from "./burger-constr.module.css"
 import FinalPrice from "./FinalPrice";
-import PropTypes from "prop-types";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch, useSelector} from "../../services/hooks";
 import {useDrop} from "react-dnd";
 import MainIngredient from "./MainIngredient";
-import {CHANGE_CURRENT_ORDER_INGREDIENTS} from "../../services/actions/order";
+import {CHANGE_CURRENT_ORDER_INGREDIENTS} from "../../services/constants";
 
-const BurgerConstructor = ({onDropHandler}) => {
+const BurgerConstructor: FC<{onDropHandler(): void }> = ({onDropHandler}) => {
 
     const dispatch = useDispatch();
 
-    const {
-        currentOrderIngredients,
-        bun
-    } = useSelector(state => state.order);
+    const store = useSelector(state => state);
+
+    const {order} = store;
 
     const [{isOver}, dropTarget] = useDrop({
         accept: "ingredient",
         drop(itemId) {
-            onDropHandler(itemId);
+            onDropHandler();
         },
         collect: monitor => ({
             isOver: monitor.isOver(),
@@ -32,42 +30,42 @@ const BurgerConstructor = ({onDropHandler}) => {
         dispatch({
             type: CHANGE_CURRENT_ORDER_INGREDIENTS, dragIndex, hoverIndex
         });
-    }, [currentOrderIngredients]);
+    }, [order.currentOrderIngredients]);
 
     return (
         <div className='m-10'>
             <ul ref={dropTarget} style={{height: '500px'}} className={`${styles.construction} ${isOver && styles.target} p-2`}>
-                {bun != null &&
+                {order.bun != null &&
                 <li className={styles.dragIngredients}>
                     <div style={{width: 40}}>
                     </div>
                     <ConstructorElement
                         type="top"
                         isLocked={true}
-                        text={bun.name + '(верх)'}
-                        price={bun.price}
-                        thumbnail={bun.image}
+                        text={order.bun?.name + '(верх)'}
+                        price={order.bun?.price}
+                        thumbnail={order.bun?.image}
                     />
                 </li>
                 }
 
                 <li className={`${styles.construction} ${styles.scrollIngredients}`}>
-                    {currentOrderIngredients &&
-                    currentOrderIngredients.map((d, index) => {
+                    {order.currentOrderIngredients &&
+                    order.currentOrderIngredients.map((d, index) => {
                         return <MainIngredient moveCard={moveCard} index={index} id={d.id} data={d} key={d.id}/>
                     })}
                 </li>
 
-                {bun !== null &&
+                {order.bun !== null &&
                 <li className={styles.dragIngredients}>
                     <div style={{width: 40}}>
                     </div>
                     <ConstructorElement
                         type="bottom"
                         isLocked={true}
-                        text={bun.name + '(низ)'}
-                        price={bun.price}
-                        thumbnail={bun.image}
+                        text={order.bun?.name + '(низ)'}
+                        price={order.bun?.price}
+                        thumbnail={order.bun?.image}
                     />
                 </li>
                 }
@@ -76,10 +74,6 @@ const BurgerConstructor = ({onDropHandler}) => {
             <FinalPrice/>
         </div>
     );
-}
-
-BurgerConstructor.propTypes = {
-    onDropHandler: PropTypes.func.isRequired
 }
 
 export default BurgerConstructor;

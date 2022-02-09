@@ -3,21 +3,23 @@ import {Element} from "react-scroll";
 import styles from "./burger-ingredient.module.css";
 import IngredientCard from "../card/IngredientCard";
 import spinner from "../../images/spinner-197px.svg";
-import {useSelector} from "react-redux";
-import PropTypes from "prop-types";
-import {buseLocation } from "react-router-dom";
+import {useSelector} from "../../services/hooks";
 
-const IngredientComponent = ({name, type}) => {
+type TIngredientComponent = {
+    name: string;
+    type: string;
+}
 
-    const {
-        allIngredientsData
-    } = useSelector(state => state.order);
+const IngredientComponent = ({name, type}: TIngredientComponent) => {
+
+    const store = useSelector(state => state);
+    const {ingredients} = store;
 
     return (
         <div>
             <Element className="pt-4 pr-10 pb-4 pl-10 text text_type_main-medium" name={name}>{name}</Element>
             <div className={styles.cards}>
-                {allIngredientsData ? (allIngredientsData.filter(d => d.type === type)
+                {ingredients.allIngredientsData ? (ingredients.allIngredientsData.filter(d => d.type === type)
                         .map(d =>
                                 <IngredientCard key={d._id} data={d}/>
                         ))
@@ -26,11 +28,6 @@ const IngredientComponent = ({name, type}) => {
         </div>
     );
 
-};
-
-IngredientComponent.propTypes = {
-    name: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired
 };
 
 export default IngredientComponent;

@@ -1,16 +1,25 @@
 import React, {useRef} from "react";
 import styles from "./burger-constr.module.css";
 import {ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import {useDrag, useDrop} from "react-dnd";
-import {DELETE_CURRENT_ORDER_INGREDIENTS} from "../../services/actions/order";
-import {useDispatch} from "react-redux";
-import PropTypes from "prop-types";
+import {useDrag, useDrop, XYCoord} from "react-dnd";
+import {DELETE_CURRENT_ORDER_INGREDIENTS} from "../../services/constants";
+import {useDispatch} from "../../services/hooks";
+import {TIngredientsData} from "../../services/types/data";
+import {DropTargetHookSpec} from "react-dnd/dist/types/hooks/types";
 
-const MainIngredient = ({moveCard, index, id, data}) => {
+
+type TIngredientProps = {
+    data: TIngredientsData;
+    id: number;
+    index: number;
+    moveCard: (dragIndex: number, hoverIndex: number) => void;
+}
+
+const MainIngredient = ({moveCard, index, id, data}: TIngredientProps) => {
     const ref = useRef(null);
     const dispatch = useDispatch();
 
-    const handleIngredientDelete = (index, itemId) => {
+    const handleIngredientDelete = (index: number, itemId: string) => {
         dispatch({
             type: DELETE_CURRENT_ORDER_INGREDIENTS,
             index, itemId
@@ -19,7 +28,7 @@ const MainIngredient = ({moveCard, index, id, data}) => {
 
     const [, drop] = useDrop({
         accept: 'cards',
-        hover(item, monitor) {
+        hover(item: any, monitor) {
             if (!ref.current) {
                 return;
             }
@@ -28,10 +37,11 @@ const MainIngredient = ({moveCard, index, id, data}) => {
             if (dragIndex === hoverIndex) {
                 return;
             }
-            const hoverBoundingRect = ref.current?.getBoundingClientRect();
+            const elem: HTMLElement | any = ref.current;
+            const hoverBoundingRect: DOMRect = elem?.getBoundingClientRect();
             const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-            const clientOffset = monitor.getClientOffset();
-            const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+            const clientOffset: any = monitor.getClientOffset();
+            const hoverClientY = clientOffset?.y - hoverBoundingRect.top;
 
             if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
                 return;
@@ -75,25 +85,6 @@ const MainIngredient = ({moveCard, index, id, data}) => {
         </div>
     );
 
-}
-
-MainIngredient.propTypes = {
-    moveCard: PropTypes.func.isRequired,
-    index: PropTypes.number.isRequired,
-    id: PropTypes.number.isRequired,
-    data: PropTypes.shape({
-        _id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        type: PropTypes.string.isRequired,
-        proteins: PropTypes.number.isRequired,
-        fat: PropTypes.number.isRequired,
-        carbohydrates: PropTypes.number.isRequired,
-        calories: PropTypes.number.isRequired,
-        price: PropTypes.number.isRequired,
-        image: PropTypes.string.isRequired,
-        image_mobile: PropTypes.string.isRequired,
-        image_large: PropTypes.string.isRequired
-    }).isRequired,
 }
 
 export default MainIngredient;

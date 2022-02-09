@@ -1,8 +1,9 @@
 import styles from './login.module.css';
 import React, {useState} from "react";
 import {Button, Input} from "@ya.praktikum/react-developer-burger-ui-components";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import {useAuth} from "../services/auth";
+import {useSelector} from "../services/hooks";
 
 const RegistryPage = () => {
 
@@ -12,9 +13,20 @@ const RegistryPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleOnSubmit = (e) => {
+    const store = useSelector(state => state);
+
+    const {user} = store;
+
+    const handleOnSubmit = (e: React.FormEvent) => {
         register(email, name, password);
         e.preventDefault();
+    }
+
+    if (user.isUserAuth) {
+        return (<Redirect to={{
+                pathname: '/profile'
+            }}/>
+        );
     }
 
     return (

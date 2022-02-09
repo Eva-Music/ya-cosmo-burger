@@ -1,17 +1,17 @@
 import React, {useState} from "react";
 import styles from './profile.module.css';
 import {Input} from "@ya.praktikum/react-developer-burger-ui-components";
-import {useDispatch, useSelector} from "react-redux";
-import {SET_USER} from "../services/actions/order";
+import {useDispatch, useSelector} from "../services/hooks";
+import {SET_USER} from "../services/constants";
 import {useAuth} from "../services/auth";
 
 const ProfilePage = () => {
 
     let { signOut, ...auth } = useAuth();
 
-    const {
-        user,
-    } = useSelector(state => state.order);
+    const store = useSelector(state => state);
+
+    const {user} = store;
 
     const dispatch = useDispatch();
 
@@ -31,7 +31,7 @@ const ProfilePage = () => {
     }
 
     const logOut = () => {
-        user.refreshToken && signOut(user.refreshToken);
+        user.user.refreshToken && signOut(user.user.refreshToken);
     }
 
     return (
@@ -57,7 +57,7 @@ const ProfilePage = () => {
                         <form onSubmit={handleOnSubmit} className={styles.block}>
                             <Input
                                 type={'text'}
-                                placeholder={user.name}
+                                placeholder={user.user.name}
                                 onChange={e => setParams({
                                     ...params,
                                     name: e.target.value
@@ -68,7 +68,7 @@ const ProfilePage = () => {
 
                             <Input
                                 type={'email'}
-                                placeholder={user.email}
+                                placeholder={user.user.email}
                                 onChange={e => setParams({
                                     ...params,
                                     email: e.target.value
@@ -79,7 +79,7 @@ const ProfilePage = () => {
 
                             <Input
                                 type={'password'}
-                                placeholder={user.password}
+                                placeholder={user.user.password}
                                 onChange={e => setParams({
                                     ...params,
                                     password: e.target.value

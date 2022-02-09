@@ -1,6 +1,8 @@
 import {TIngredientsData} from '../types/data';
 
-import {GET_LIST_INGREDIENTS_FAILED, GET_LIST_INGREDIENTS_REQUEST, GET_LIST_INGREDIENTS_SUCCESS} from '../constants';
+import {GET_LIST_INGREDIENTS_FAILED,
+    GET_LIST_INGREDIENTS_REQUEST,
+    GET_LIST_INGREDIENTS_SUCCESS} from '../constants';
 
 export type TIngredientsState = {
     allIngredientsData: ReadonlyArray<TIngredientsData>;
@@ -9,7 +11,7 @@ export type TIngredientsState = {
     allIngredientsFailedMsg: string;
 }
 
-const ingredientsInitialState = {
+const ingredientsInitialState: TIngredientsState = {
     allIngredientsData: [],
     loading: false,
     allIngredientsFailToLoad: false,

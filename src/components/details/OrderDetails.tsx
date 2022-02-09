@@ -1,16 +1,17 @@
 import style from './details.module.css'
 import {CheckMarkIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import {useSelector} from "react-redux";
+import {useSelector} from "../../services/hooks";
 
 const OrderDetails = () => {
-    const {
-        currentOrderNumber
-    } = useSelector(state => state.order);
+
+    const store = useSelector(state => state);
+
+    const {order} = store;
 
     return (
         <div style={{marginLeft: 46}} className={style.main}>
             <div>
-                <p className="text text_type_digits-large">{currentOrderNumber}</p>
+                <p className="text text_type_digits-large">{order.currentOrderNumber}</p>
             </div>
             <div className="mt-15">
                 <p className="text text_type_main-medium">идентификатор заказа</p>

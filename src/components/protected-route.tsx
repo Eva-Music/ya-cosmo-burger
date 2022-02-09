@@ -1,16 +1,17 @@
 import {useAuth} from '../services/auth';
 import {Redirect, Route} from 'react-router-dom';
-import React, {useEffect} from 'react';
-import {useSelector} from "react-redux";
+import React, {FC, useEffect} from 'react';
+import {useSelector} from "../services/hooks";
+import { RouteProps } from 'react-router';
 
-export function ProtectedRoute({ children, ...rest }) {
+export const ProtectedRoute: FC<RouteProps> = ({ children, ...rest }) =>  {
     let { refreshUser, ...auth } = useAuth();
 
-    const {
-        isUserAuth
-    } = useSelector(state => state.order);
+    const store = useSelector(state => state);
 
-    const redirectTo = (to, location) => {
+    const {user} = store;
+
+    const redirectTo = (to: string, location: any) => {
         return (<Redirect
             to={{
                 pathname: to,
@@ -20,24 +21,29 @@ export function ProtectedRoute({ children, ...rest }) {
     }
 
     useEffect(() => {
-            if (!isUserAuth) {
+        console.log(user);
+            if (!user.isUserAuth) {
                 const token = window.localStorage.getItem('refreshToken');
+                console.log(token);
                 token && refreshUser(token);
             }
         }, []
     );
 
     useEffect(() => {
-        console.log(isUserAuth);
-    }, [isUserAuth]);
+        console.log(user);
+    }, [user.isUserAuth]);
+
 
     return (
         <Route
             {...rest}
             render={({ location }) =>
             {
-                if (isUserAuth) {
+                if (user.isUserAuth) {
+                    // @ts-ignore
                     return location.state && location.state.from.pathname ?
+                        // @ts-ignore
                         redirectTo(location.state.from.pathname, location) :
                         children;
                 } else {

@@ -17,22 +17,22 @@ import {
 
 export type TUserState = {
     resetLoading: boolean,
-    resetPasswordSuccess: undefined,
-    resetPasswordFailed: undefined,
+    resetPasswordSuccess: boolean,
+    resetPasswordFailed: boolean,
 
-    resetEmailSuccess: undefined,
-    resetEmailFailed: undefined,
+    resetEmailSuccess: boolean,
+    resetEmailFailed: boolean,
     user: TUser,
     userError: boolean,
     isUserAuth: boolean,
 }
-const userInitialState = {
+const userInitialState : TUserState= {
     resetLoading: true,
-    resetPasswordSuccess: undefined,
-    resetPasswordFailed: undefined,
+    resetPasswordSuccess: false,
+    resetPasswordFailed: false,
 
-    resetEmailSuccess: undefined,
-    resetEmailFailed: undefined,
+    resetEmailSuccess: false,
+    resetEmailFailed: false,
 
     user: {
         name: '',
@@ -48,7 +48,6 @@ const userInitialState = {
     userError: false,
     isUserAuth: false,
 };
-
 
 export const userReducer = (state = userInitialState, action: any): TUserState => {
     switch (action.type) {
@@ -110,7 +109,13 @@ export const userReducer = (state = userInitialState, action: any): TUserState =
         case CLEAN_USER: {
             return {
                 ...state,
-                user: {}
+                user: {
+                    name: '',
+                    email: '',
+                    password: '',
+                    accessToken: '',
+                    refreshToken: ''
+                }
             }
         }
         case USER_ERROR: {
@@ -125,10 +130,10 @@ export const userReducer = (state = userInitialState, action: any): TUserState =
             return {
                 ...state,
                 resetLoading: true,
-                resetPasswordSuccess: undefined,
-                resetPasswordFailed: undefined,
-                resetEmailSuccess: undefined,
-                resetEmailFailed: undefined
+                resetPasswordSuccess: false,
+                resetPasswordFailed: false,
+                resetEmailSuccess: false,
+                resetEmailFailed: false
             }
         }
         case RESET_PASSWORD_SUCCESS: {

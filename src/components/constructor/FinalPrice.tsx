@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {Button, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from './final-price.module.css'
-import {useDispatch, useSelector} from "react-redux";
-import {getOrderNumber, ORDER_PRICE} from "../../services/actions/order";
+import {useDispatch, useSelector} from "../../services/hooks";
+import {ORDER_PRICE} from "../../services/constants";
 import {useAuth} from "../../services/auth";
 import {Redirect, useLocation} from "react-router-dom";
+import {getOrderNumberThunk} from "../../services/actions/order";
 
 const FinalPrice = () => {
 
@@ -12,39 +13,36 @@ const FinalPrice = () => {
     const location = useLocation();
     const [isClicked, setClicked] = useState(false);
 
-    const {
-        currentOrderIngredients,
-        orderPrice,
-        bun,
-        user,
-        isUserAuth
-    } = useSelector(state => state.order);
-
     const dispatch = useDispatch();
 
+    const store = useSelector(state => state);
+
+    const {order, user} = store;
+
     useEffect(() => {
-        if (currentOrderIngredients.length !== 0) {
+        if (order.currentOrderIngredients.length !== 0) {
             dispatch({
                 type: ORDER_PRICE,
             })
         }
-    }, [currentOrderIngredients]);
+    }, [order.currentOrderIngredients]);
 
     const openOrderModal = () => {
-        !isUserAuth && setClicked(true);
-        return bun && dispatch(getOrderNumber(currentOrderIngredients));
+        !user.isUserAuth && setClicked(true);
+        console.log(order.currentOrderIngredients);
+        return order.bun && dispatch(getOrderNumberThunk(order.currentOrderIngredients));
     }
 
     useEffect(()=> {
         setClicked(false);
-        if (!isUserAuth) {
+        if (!user.isUserAuth) {
             const token = window.localStorage.getItem('refreshToken');
             token && refreshUser(token);
         }
     }, [])
 
     if (isClicked){
-        if (!user.email){
+        if (!user.user.email){
             return (<Redirect to={{
                     pathname: '/login',
                     state: {from: location}
@@ -56,7 +54,7 @@ const FinalPrice = () => {
     return (
         <div className={styles.main}>
             <section className={`${styles.mainPrice} m-5`}>
-                <span className='text_type_digits-medium m-2'>{orderPrice}</span>
+                <span className='text_type_digits-medium m-2'>{order.orderPrice}</span>
                 <CurrencyIcon type="primary"/>
             </section>
 

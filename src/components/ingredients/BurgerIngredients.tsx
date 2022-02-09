@@ -21,13 +21,16 @@ function BurgerIngredients() {
     return (
         <section >
             <div style={{ display: 'flex' }}>
-                <Tab value='Булки' active={inViewBun}>Булки</Tab>
+                <Tab value='Булки' active={inViewBun}
+                     onClick={() => console.log()}>Булки</Tab>
 
-                <Tab value='Соусы' active={!inViewBun && inViewSauce} >
+                <Tab value='Соусы' active={!inViewBun && inViewSauce}
+                     onClick={() => console.log()}>
                     Соусы
                 </Tab>
 
-                <Tab value='Начинки' active={!inViewSauce && inViewMain}>
+                <Tab value='Начинки' active={!inViewSauce && inViewMain}
+                     onClick={() => console.log()}>
                     Начинки
                 </Tab>
             </div>

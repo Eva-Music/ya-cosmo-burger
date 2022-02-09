@@ -11,31 +11,29 @@ import {ProtectedRoute} from "../protected-route";
 import {ProvideAuth} from '../../services/auth';
 import IngredientDetailsPage from "../../pages/IngredientDetailsPage";
 import AppHeader from "../header/AppHeader";
-import {useDispatch, useSelector} from "react-redux";
-import {getListIngredients} from "../../services/actions/order";
+import {getIngredientsThunk} from "../../services/actions/ingredients";
+import {useDispatch, useSelector} from "../../services/hooks";
 
 export default function App() {
 
     const dispatch = useDispatch();
 
+    const store = useSelector(state => state);
+
     const {
-        modalOpen,
-        currentIngredient,
-        allIngredientsData,
-        user
-    } = useSelector(state => state.order);
+        user, ingredients, order
+    } = store;
 
     useEffect(() => {
-        if (!allIngredientsData.length) dispatch(getListIngredients());
+        if (!ingredients?.allIngredientsData?.length) dispatch(getIngredientsThunk());
     }, []);
 
     useEffect(() => {
-        user.refreshToken && window.localStorage.setItem('refreshToken', user.refreshToken);
-    }, [user.refreshToken]);
+        user.user?.refreshToken && window.localStorage.setItem('refreshToken', user.user?.refreshToken);
+    }, [user.user?.refreshToken]);
 
     return (
         <>
-
             <ProvideAuth>
                 <Router>
                     <AppHeader/>
@@ -59,7 +57,7 @@ export default function App() {
                             <ProfilePage/>
                         </ProtectedRoute>
                         <Route path={`/ingredients/:id`} exact={true}>
-                            {modalOpen && currentIngredient ? <MainPage /> : <IngredientDetailsPage/>}
+                            {order.modalOpen && order.currentIngredient ? <MainPage /> : <IngredientDetailsPage/>}
                         </Route>
                         <Route>
                             <NotFound404/>

@@ -2,10 +2,14 @@ import React, {useRef} from "react";
 import styles from "./modal-overlay.module.css"
 import PropTypes from "prop-types";
 
-const ModalOverlay = ({onClose}) => {
-    const ref = useRef();
+type TModalOverlay = {
+    onClose: () => void;
+}
 
-    const handleClickOutside = (e) => {
+const ModalOverlay = ({onClose}: TModalOverlay) => {
+    const ref: any = useRef();
+
+    const handleClickOutside = (e: React.MouseEvent) => {
         if (ref && ref.current && ref.current.contains(e.target)) {
             onClose();
         }

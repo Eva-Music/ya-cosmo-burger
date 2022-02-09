@@ -2,7 +2,7 @@ import styles from './login.module.css';
 import React, {useEffect, useState} from "react";
 import {Button, Input} from "@ya.praktikum/react-developer-burger-ui-components";
 import {Link, Redirect, useLocation} from "react-router-dom";
-import {useSelector} from "react-redux";
+import {useSelector} from "../services/hooks";
 import {useAuth} from "../services/auth";
 
 const ResetPasswordPage = () => {
@@ -15,24 +15,26 @@ const ResetPasswordPage = () => {
 
     const location = useLocation();
 
-    const {
-        resetPasswordSuccess
-    } = useSelector(state => state.order);
+    const store = useSelector(state => state);
 
-    const handleButtonClick = (e) => {
+    const {user} = store;
+
+    const handleButtonClick = (e: React.FormEvent) => {
         resetUserPassword(password, code);
         e.preventDefault();
     }
 
     useEffect(() => {
         setIsNotAllowed(false);
+        // @ts-ignore
         if (!location.state || !location.state.from.pathname &&
+            // @ts-ignore
             location.state.from.pathname !== '/forgot-password'){
             setIsNotAllowed(true);
         }
     }, []);
 
-    if (resetPasswordSuccess || isNotAllowed) {
+    if (user.resetPasswordSuccess || isNotAllowed) {
         return (<Redirect to={{
                 pathname: '/login'
             }}/>
