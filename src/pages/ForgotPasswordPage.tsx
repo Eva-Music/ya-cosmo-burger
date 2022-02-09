@@ -2,7 +2,7 @@ import styles from './login.module.css';
 import React, {useState} from "react";
 import {Button, Input} from "@ya.praktikum/react-developer-burger-ui-components";
 import {Link, Redirect, useLocation} from "react-router-dom";
-import {useSelector} from "react-redux";
+import {useSelector} from "../services/hooks";
 import {useAuth} from "../services/auth";
 
 const ForgotPasswordPage = () => {
@@ -11,18 +11,17 @@ const ForgotPasswordPage = () => {
 
     let { forgotUserPassword, ...auth } = useAuth();
 
-    const {
-        resetEmailSuccess
-    } = useSelector(state => state.order);
+    const store = useSelector(state => state);
+    const {user} = store;
 
     const [email, setEmail] = useState('');
 
-    const handleOnSubmit = (e) => {
+    const handleOnSubmit = (e: React.FormEvent) => {
         forgotUserPassword(email);
         e.preventDefault();
     }
 
-    if (resetEmailSuccess) {
+    if (user.resetEmailSuccess) {
         return (<Redirect to={{
                 pathname: '/reset-password',
                 state: {from: location}

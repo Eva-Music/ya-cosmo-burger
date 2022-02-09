@@ -1,25 +1,25 @@
 import style from "./details.module.css";
 import React from "react";
 import spinner from "../../images/spinner.svg";
-import {useSelector} from "react-redux";
+import {useSelector} from "../../services/hooks";
 
 const IngredientDetails = () => {
 
-    const {
-        currentIngredient
-    } = useSelector(state => state.order);
+    const store = useSelector(state => state);
+
+    const {order} = store;
 
     return (
         <>
-            {currentIngredient &&
+            {order.currentIngredient &&
             <div className={style.main}>
                 <div>
                     <p className="text text_type_main-medium">Детали ингредиента</p>
                 </div>
-                {currentIngredient ? <section className={`p-10 ${style.main}`}>
-                    <img src={currentIngredient.image_large} alt='ingredient'/>
+                {order.currentIngredient ? <section className={`p-10 ${style.main}`}>
+                    <img src={order.currentIngredient.image_large} alt='ingredient'/>
                     <div className={"mt-5"}>
-                        <p className='text text_type_main-medium'>{currentIngredient.name}</p>
+                        <p className='text text_type_main-medium'>{order.currentIngredient.name}</p>
                     </div>
                 </section> : <img src={spinner} alt="load"/>}
 
@@ -31,7 +31,7 @@ const IngredientDetails = () => {
                         </div>
                         <div>
                             <p className="text text_type_digits-default text_color_inactive">
-                                {currentIngredient.calories} </p>
+                                {order.currentIngredient.calories} </p>
                         </div>
                     </div>
                     <div className={style.main}>
@@ -41,7 +41,7 @@ const IngredientDetails = () => {
                         </div>
                         <div>
                             <p className="text text_type_digits-default text_color_inactive">
-                                {currentIngredient.proteins} </p>
+                                {order.currentIngredient.proteins} </p>
                         </div>
                     </div>
                     <div className={style.main}>
@@ -51,7 +51,7 @@ const IngredientDetails = () => {
                         </div>
                         <div>
                             <p className="text text_type_digits-default text_color_inactive">
-                                {currentIngredient.fat} </p>
+                                {order.currentIngredient.fat} </p>
                         </div>
                     </div>
                     <div className={style.main}>
@@ -61,7 +61,7 @@ const IngredientDetails = () => {
                         </div>
                         <div>
                             <p className="text text_type_digits-default text_color_inactive">
-                                {currentIngredient.carbohydrates} </p>
+                                {order.currentIngredient.carbohydrates} </p>
                         </div>
                     </div>
                 </div>

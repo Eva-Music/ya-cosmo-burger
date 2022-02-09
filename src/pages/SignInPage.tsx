@@ -2,30 +2,31 @@ import styles from './login.module.css';
 import React, {useState} from "react";
 import {Button, Input} from "@ya.praktikum/react-developer-burger-ui-components";
 import {Link, Redirect, useLocation} from "react-router-dom";
-import {useSelector} from "react-redux";
+import {useSelector} from "../services/hooks";
 import {useAuth} from "../services/auth";
 
 const SignInPage = () => {
 
     let { signIn, ...auth } = useAuth();
 
-    const {
-        isUserAuth
-    } = useSelector(state => state.order);
+    const store = useSelector(state => state);
+
+    const {user} = store;
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const location = useLocation();
 
-    const handleOnSubmit = (e) => {
+    const handleOnSubmit = (e: React.FormEvent) => {
         console.log(email, password);
         signIn(email, password);
         e.preventDefault();
     }
 
-    if (isUserAuth) {
+    if (user.isUserAuth) {
         return (<Redirect to={{
-                pathname: location.state.from.pathname,
+                // @ts-ignore
+                pathname: location.state?.from?.pathname,
             }}/>
         );
     }
