@@ -49,5 +49,6 @@ export const getOrderNumberThunk = (ingredients: ReadonlyArray<TIngredientsData 
         } else {
             dispatch(getOrderNumberFailedAction(res.message));
         }
-    })
-};
+    }).catch(err => {
+        dispatch(getOrderNumberFailedAction(err.message));
+    })};

@@ -184,6 +184,8 @@ export const resetEmailThunk: any = (email: string) => async (dispatch: any) => 
             dispatch(resetEmailFailedAction())
         }
         return res.success;
+    }).catch(err => {
+        dispatch(resetEmailFailedAction())
     })
 }
 
@@ -196,6 +198,8 @@ export const resetPasswordThunk: any = (password: string, code: string) => async
             dispatch(resetPasswordFailedAction())
         }
         return res.success;
+    }).catch(err => {
+        dispatch(resetPasswordFailedAction())
     })
 }
 
@@ -211,8 +215,9 @@ export const userRegisterThunk: any =
             dispatch(userRequestFailedAction(true))
         }
         return res.success;
-    })
-}
+    }).catch(err => {
+        dispatch(userRequestFailedAction(true));
+    })}
 
 export const loginThunk: any = (email: string, password: string) => async (dispatch: any) => {
     dispatch(userRequestAction());
@@ -225,14 +230,13 @@ export const loginThunk: any = (email: string, password: string) => async (dispa
             dispatch(userRequestFailedAction(true));
         }
         return res.success;
-    })
-}
+    }).catch(err => {
+        dispatch(userRequestFailedAction(true));
+    })}
 
 export const getUserDataThunk: any = (token: string) => async (dispatch: any) => {
     dispatch(userRequestAction());
     return await getUserRequest(token).then(res => {
-        console.log(token);
-        console.log(res);
         if (res && res.success) {
             dispatch(setUserSuccessAction(res.user))
             dispatch(authUserAction())
@@ -241,26 +245,28 @@ export const getUserDataThunk: any = (token: string) => async (dispatch: any) =>
         }
         console.log(res);
         return res.user.email;
-    });
-}
+    }).catch(err => {
+        dispatch(userRequestFailedAction(true));
+    })}
 
 export const refreshTokenDataThunk: any = (token: string) => async (dispatch: any) => {
     dispatch(tokenAction());
     return await refreshTokenRequest(token).then(res => {
-        console.log(token);
-        console.log(res);
         if (res && res.success) {
-            dispatch(setUserTokenSuccessAction(res.tokens.refreshToken,
-                    res.tokens.accessToken.split('Bearer ')[1]));
-            return res.tokens.accessToken.split('Bearer ')[1];
+            window.localStorage.setItem('refreshToken', res.refreshToken);
+            dispatch(setUserTokenSuccessAction(res.refreshToken,
+                    res.accessToken.split('Bearer ')[1]));
+            return res.accessToken.split('Bearer ')[1];
         } else {
             dispatch(userRequestFailedAction(true))
-            window.localStorage.removeItem("refreshToken");
             return res.success;
         }
-    });
+    }).catch(err => {
+        dispatch(userRequestFailedAction(true));
+        window.localStorage.removeItem("refreshToken");
+        return false;
+    })
 }
-
 
 export const logoutDataThunk: any = (token: string) => async (dispatch: any) => {
     dispatch(logoutAction());
@@ -269,8 +275,11 @@ export const logoutDataThunk: any = (token: string) => async (dispatch: any) => 
             dispatch(cleanUserAction());
             dispatch(authUserAction());
         } else {
+            window.localStorage.removeItem("refreshToken");
             dispatch(userRequestFailedAction(true));
         }
         return res.success;
+    }).catch(err => {
+        dispatch(userRequestFailedAction(true));
     })
 }

@@ -18,7 +18,9 @@ const AppHeader = () => {
                 <p className={`${styles.link} text text_type_main-small text_color_inactive`}>Лента заказов</p>
             </div>
             <div className={`${styles.menuItem} pt-4 pr-10 pb-4 pl-8`}>
-                <Logo />
+                <Link to={{ pathname: `/`}}>
+                    <Logo />
+                </Link>
             </div>
             <div className={"pt-4 pr-10 pb-4 pl-10"}/>
             <Link to={{ pathname: `/profile`}}>

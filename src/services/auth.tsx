@@ -1,4 +1,4 @@
-import React, {createContext, ProviderProps, ReactNode, useContext} from 'react';
+import React, {createContext, ReactNode, useContext} from 'react';
 import {useDispatch} from "react-redux";
 import {
     getUserDataThunk,
@@ -43,10 +43,9 @@ export function useProvideAuth(): TProviderAuth {
     const dispatch = useDispatch();
 
     const register = async (email: string, name: string, password: string) => {
-        console.log(email, name, password)
         const success = await dispatch(userRegisterThunk(email, name, password));
         console.log(success);
-        return success
+        return success;
     };
 
     const refreshToken: (token: string) => Promise<any> = async (token: string) => {
@@ -56,10 +55,10 @@ export function useProvideAuth(): TProviderAuth {
     };
 
     const refreshUser: (token: string) => Promise<any> = async (token: string) => {
-        const accessToken = await dispatch(refreshTokenDataThunk(token));
+        const accessToken = await refreshToken(token);
         console.log(accessToken);
         if (accessToken) {
-            return getUser(accessToken);
+            return await getUser(accessToken);
         }
     };
 

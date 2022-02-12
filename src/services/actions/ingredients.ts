@@ -16,7 +16,7 @@ export interface IGetIngredientsFailedAction {}
 
 export interface IGetIngredientsSuccessAction {
     readonly type: any;
-    readonly ingredients: any;
+    readonly ingredients: TIngredientsData;
 }
 
 
@@ -25,7 +25,7 @@ export const getIngredientsAction = (): IGetIngredientsAction => ({
 });
 
 export const getIngredientsSuccessAction = (
-    ingredients: ReadonlyArray<TIngredientsData>
+    ingredients: TIngredientsData
 ): IGetIngredientsSuccessAction => ({
     type: GET_LIST_INGREDIENTS_SUCCESS,
     ingredients
@@ -43,5 +43,7 @@ export const getIngredientsThunk: any = () => (dispatch: any) => {
         } else {
             dispatch(getIngredientsFailedAction());
         }
-    });
+    }).catch(err => {
+        dispatch(getIngredientsFailedAction());
+    })
 };
